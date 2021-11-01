@@ -30,7 +30,7 @@ describe("get request tests", () => {
 				});
 		});
 	});
-	describe("get /api/articles/:article_id", () => {
+	describe.only("get /api/articles/:article_id", () => {
 		it("should return 200 and an object containing the relevant article, including author, title, article id, body, topic, created at, votes and comment count. Comment count should include a count of all the comments provided on the article", () => {
 			return request(app)
 				.get("/api/articles/2")
