@@ -1,0 +1,34 @@
+STEP 1 - SETUP
+Create two .env files x
+add the db names x
+git ignore env files x
+
+read setup.sql x
+
+STEP 2 - SEEDING
+create table for topics inc. slug and description fields x
+
+create table for users inc. username, avatar url and name x
+
+create table for articles inc. article id, title, body, votes, topic (ref to slug in topics), author (ref to username), created_at, DEPENDENT ON TOPICS AND USERS x
+
+create table for comments inc comment id, author (ref to username), article id (ref to article id), votes, created at, body, DEPENDENT ON TOPICS AND USERS x
+
+seed data into topics x
+
+seed data into users x
+ 
+seed data into articles x
+
+seed data into table x
+
+STEP 3 - ENDPOINTS
+
+GET /api/topics 
+- happy path TDD (200, returns an array of all topics) x
+- 404 not found x 
+- 500 internal server error x
+
+GET /api/articles/:article_id
+ - happy path (returns 200 and the article with the id) 
+ - 400 bad request (not an id) 
