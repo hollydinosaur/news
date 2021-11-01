@@ -97,9 +97,6 @@ const seed = (data) => {
 				])
 			);
 			return db.query(queryStr);
-		})
-		.then((data) => {
-			console.log("completed seeding DB");
 		});
 };
 
