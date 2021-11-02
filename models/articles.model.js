@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-const { sortByFilter, orderFilter } = require("../utils");
+const { sortByFilter, orderFilter, validateTopic } = require("../utils");
 
 exports.fetchArticleById = (id) => {
 	return db
@@ -45,6 +45,7 @@ exports.fetchAllArticles = async (
 ) => {
 	let verifiedSortBy = await sortByFilter(sortBy);
 	let verifiedOrder = await orderFilter(order);
+	let validatedTopic = await validateTopic(topic);
 	return db
 		.query(
 			`SELECT articles.*, COUNT (comments.comment_id) AS comment_count
@@ -53,7 +54,7 @@ exports.fetchAllArticles = async (
 	WHERE articles.topic = $1
 	GROUP BY articles.article_id
 	ORDER BY ${verifiedSortBy} ${verifiedOrder};`,
-			[topic]
+			[validatedTopic]
 		)
 		.then((data) => {
 			return data.rows;

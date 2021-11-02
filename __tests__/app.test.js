@@ -130,6 +130,22 @@ describe("get request tests", () => {
 					expect(body.msg).toBe("Invalid order query");
 				});
 		});
+		it("should return 404 no such path when the topic value does not exist", () => {
+			return request(app)
+				.get("/api/articles/?topic=notattopic")
+				.expect(404)
+				.then(({ body }) => {
+					expect(body.msg).toBe("No such path");
+				});
+		});
+		it("should return 404 no topic data when there are no articles of the given topic", () => {
+			return request(app)
+				.get("/api/articles/?topic=paper")
+				.expect(404)
+				.then(({ body }) => {
+					expect(body.msg).toBe("No topic data");
+				});
+		});
 	});
 });
 

@@ -46,13 +46,13 @@ GET /api/articles/:article_id
  - accepts other params x
  - happy path status 200, allows user to order whether asc or desc, defaulting to desc x
  - happy path status 200, allow user to filter the article by the topic value specified in the query x
- - 400 returns bad request when passed a sort by query which does not exist 
- - 400 returns bad request when asked to order by something which isnt asc/desc
- - 404 returns no such path when topic value doesn't exist
- - returns 404 no such path when there are no articles of the given topic
+ - 400 returns bad request when passed a sort by query which does not exist x
+ - 400 returns bad request when asked to order by something which isnt asc/desc x
+ - 404 returns no such path when topic value doesn't exist x
+ - returns 404 no such path when there are no articles of the given topic 
 
 GET /api/articles/:article_id/comments 
-- happy path returns 200 and returns an array of comments for the given article id, with the properties comment id, votes, created at, author and body
+- happy path returns 200 and returns an array of comments for the given article id, with the properties comment id, votes, created at, author and body 
 - 400 bad request when the id does not meet criteria, e.g. is a string 
 - 404 no such path when the article has no comments
 - 404 no such path when passed a valid number but there are no articles for that number, e.g. 208897
