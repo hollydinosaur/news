@@ -7,7 +7,7 @@ const apiRouter = require("./routers/api.router.js");
 
 app.use("/api", apiRouter);
 
-app.all("/*", (req, res) => {
+app.all("/*", (req, res, next) => {
 	res.status(404).send({ message: "Not found" });
 });
 app.use(handle500);

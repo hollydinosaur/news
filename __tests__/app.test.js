@@ -33,18 +33,18 @@ describe("get request tests", () => {
 	describe.only("get /api/articles/:article_id", () => {
 		it("should return 200 and an object containing the relevant article, including author, title, article id, body, topic, created at, votes and comment count. Comment count should include a count of all the comments provided on the article", () => {
 			return request(app)
-				.get("/api/articles/2")
+				.get("/api/articles/1")
 				.expect(200)
 				.then(({ body }) => {
-					expect(body).toHaveProperty("author");
-					expect(body).toHaveProperty("title");
-					expect(body).toHaveProperty("article_id");
-					expect(body).toHaveProperty("body");
-					expect(body).toHaveProperty("topic");
-					expect(body).toHaveProperty("created_at");
-					expect(body).toHaveProperty("votes");
-					expect(body).toHaveProperty("comment_count");
-					expect(body.comment_count).toBeInstanceOf(Number);
+					expect(body.article).toHaveProperty("author");
+					expect(body.article).toHaveProperty("title");
+					expect(body.article).toHaveProperty("article_id");
+					expect(body.article).toHaveProperty("body");
+					expect(body.article).toHaveProperty("topic");
+					expect(body.article).toHaveProperty("created_at");
+					expect(body.article).toHaveProperty("votes");
+					expect(body.article).toHaveProperty("comment_count");
+					expect(body.article.comment_count).toBe("11");
 				});
 		});
 	});

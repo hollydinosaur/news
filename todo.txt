@@ -22,6 +22,14 @@ seed data into articles x
 
 seed data into table x
 
+reference articles topic with topics slug
+
+reference articles author with users username
+
+reference comment article_id with articles article_id
+
+reference comment author with users username
+
 STEP 3 - ENDPOINTS
 
 GET /api/topics 
@@ -30,5 +38,13 @@ GET /api/topics
 - 500 internal server error x
 
 GET /api/articles/:article_id
- - happy path (returns 200 and the article with the id) 
- - 400 bad request (not an id) 
+ - happy path (returns 200 and the article with the id with author(username form users table), title
+ - 400 bad request (not the right format e.g. string) 
+ - 404 not found (id a number but does not exist e.g. 800)
+
+ PATCH /api/articles/:article_id
+ - happy path (accepts an object in the form  `{ inc_votes: newVote }`, amend the amount of votes by the newVote info in the given article id, return updated article)
+ -  400 bad request for wrong format input, both for not an obj, or the wrong value type in the obj (e.g. { inc_votes: 'invalid' })
+ 
+ GET /api/articles
+ - happy path 
