@@ -11,6 +11,21 @@ exports.fetchArticleById = (id) => {
 			[id]
 		)
 		.then((data) => {
+			if (data.rows.length === 0) {
+				return Promise.reject({ status: 404, msg: "Article ID not found" });
+			} else return data.rows[0];
+		});
+};
+
+exports.changeArticleVotes = (id, voteChange) => {
+	return db
+		.query(
+			`UPDATE articles
+	SET votes = $1
+	WHERE article_id = $2 RETURNING *`,
+			[voteChange, id]
+		)
+		.then((data) => {
 			return data.rows[0];
 		});
 };
