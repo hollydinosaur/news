@@ -1,7 +1,7 @@
 const format = require("pg-format");
 const { query } = require("../connection.js");
 const db = require("../connection.js");
-const { createReferenceObj, formatArray } = require("../utils");
+const { createReferenceObj, formatArray } = require("../../utils");
 
 const seed = (data) => {
 	const { articleData, commentData, topicData, userData } = data;

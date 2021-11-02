@@ -7,6 +7,7 @@ const {
 } = require("./controllers/errors.controller");
 const apiRouter = require("./routers/api.router.js");
 app.use(express.json());
+
 app.use("/api", apiRouter);
 
 app.use(handleCustom);

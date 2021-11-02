@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { sortByFilter, orderFilter } = require("../utils");
 
 exports.fetchArticleById = (id) => {
 	return db
@@ -34,5 +35,27 @@ exports.changeArticleVotes = (id, voteChange) => {
 				.then((data) => {
 					return data.rows[0];
 				});
+		});
+};
+
+exports.fetchAllArticles = async (
+	sortBy = "created_at",
+	order = "DESC",
+	topic = "*"
+) => {
+	let verifiedSortBy = await sortByFilter(sortBy);
+	let verifiedOrder = await orderFilter(order);
+	return db
+		.query(
+			`SELECT articles.*, COUNT (comments.comment_id) AS comment_count
+	FROM articles 
+	JOIN comments ON comments.article_id = articles.article_id
+	WHERE articles.topic = $1
+	GROUP BY articles.article_id
+	ORDER BY ${verifiedSortBy} ${verifiedOrder};`,
+			[topic]
+		)
+		.then((data) => {
+			return data.rows;
 		});
 };

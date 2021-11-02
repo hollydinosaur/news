@@ -41,4 +41,18 @@ GET /api/articles/:article_id
  - 400 bad request when passed the wrong value type in the obj (e.g. { inc_votes: 'invalid' }) x
  
  GET /api/articles
- - happy path 
+ - happy path returns 200 and an array of article objects with the properties author(username from users), title, article_id, topic, created_at, votes, comment_count x
+ - happy path status 200, accepts sort by query which defaults to date, returns obj as above, but sorted by passed param. x
+ - accepts other params x
+ - happy path status 200, allows user to order whether asc or desc, defaulting to desc x
+ - happy path status 200, allow user to filter the article by the topic value specified in the query x
+ - 400 returns bad request when passed a sort by query which does not exist 
+ - 400 returns bad request when asked to order by something which isnt asc/desc
+ - 404 returns no such path when topic value doesn't exist
+ - returns 404 no such path when there are no articles of the given topic
+
+GET /api/articles/:article_id/comments 
+- happy path returns 200 and returns an array of comments for the given article id, with the properties comment id, votes, created at, author and body
+- 400 bad request when the id does not meet criteria, e.g. is a string 
+- 404 no such path when the article has no comments
+- 404 no such path when passed a valid number but there are no articles for that number, e.g. 208897
