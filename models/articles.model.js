@@ -19,13 +19,20 @@ exports.fetchArticleById = (id) => {
 
 exports.changeArticleVotes = (id, voteChange) => {
 	return db
-		.query(
-			`UPDATE articles
-	SET votes = $1
-	WHERE article_id = $2 RETURNING *`,
-			[voteChange, id]
-		)
+		.query(`SELECT votes FROM articles WHERE article_id = $1`, [id])
 		.then((data) => {
-			return data.rows[0];
+			return Number(data.rows[0].votes) + Number(voteChange);
+		})
+		.then((votes) => {
+			return db
+				.query(
+					`UPDATE articles
+		SET votes = $1
+		WHERE article_id = $2 RETURNING *`,
+					[votes, id]
+				)
+				.then((data) => {
+					return data.rows[0];
+				});
 		});
 };

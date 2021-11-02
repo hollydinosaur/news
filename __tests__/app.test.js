@@ -83,5 +83,32 @@ describe("patch request tests", () => {
 					expect(body.article.votes).toBe(10);
 				});
 		});
+		it("should decrement the amount of votes on the article with the given id (when the id is a negative)", () => {
+			return request(app)
+				.patch("/api/articles/1")
+				.send({ inc_votes: -10 })
+				.expect(200)
+				.then(({ body }) => {
+					expect(body.article.votes).toBe(90);
+				});
+		});
+		it("should return a 400 status code and a message saying invalid request when it is not sent an object", () => {
+			return request(app)
+				.patch("/api/articles/1")
+				.send("not an object")
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Invalid Request");
+				});
+		});
+		it("should return a 400 bad request when the value passed is not a number, or the property is incorrectly labelled", () => {
+			return request(app)
+				.patch("/api/articles/1")
+				.send({ not_correct: "hello" })
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Invalid Request");
+				});
+		});
 	});
 });

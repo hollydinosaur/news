@@ -35,8 +35,10 @@ GET /api/articles/:article_id
  - 404 not found (id a number but does not exist e.g. 800) x
 
  PATCH /api/articles/:article_id
- - happy path (accepts an object in the form  `{ inc_votes: newVote }`, amend the amount of votes by the newVote info in the given article id, return updated article)
- -  400 bad request for wrong format input, both for not an obj, or the wrong value type in the obj (e.g. { inc_votes: 'invalid' })
+ - happy path (accepts an object in the form  `{ inc_votes: newVote }`, amend the amount of votes by the newVote info in the given article id, return updated article) x
+ - work with negative values too x
+ -  400 bad request for wrong format input, when not passed an obj x
+ - 400 bad request when passed the wrong value type in the obj (e.g. { inc_votes: 'invalid' }) x
  
  GET /api/articles
  - happy path 
