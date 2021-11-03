@@ -6,7 +6,6 @@ const {
 	getComments,
 	postComment,
 } = require("../controllers/articles.controller");
-const articles = require("../db/data/test-data/articles");
 
 articlesRouter
 	.route("/:id")

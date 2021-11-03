@@ -295,5 +295,76 @@ describe("post request tests", () => {
 					expect(body.msg).toBe("Method not allowed");
 				});
 		});
+		it("should return 400 when passed an object which does not have the correct properties", () => {
+			return request(app)
+				.post("/api/articles/2/")
+				.send({ notausername: "rogersop", notabody: "here is a fifth comment" })
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Invalid Username");
+				});
+		});
+		it("should return 400 when not passed an object", () => {
+			return request(app)
+				.post("/api/articles/2/")
+				.send("not an object")
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Invalid Username");
+				});
+		});
+	});
+});
+
+describe.only("delete request tests", () => {
+	describe("delete /api/comments/:comment_id", () => {
+		it("should return 204 and delete the comment with the given id, without returning anything", () => {
+			return request(app)
+				.delete("/api/comments/4")
+				.expect(204)
+				.then(({ body }) => {
+					expect(body).toEqual({});
+				})
+				.then(() => {
+					return request(app)
+						.get("/api/comments/4")
+						.expect(200)
+						.then(({ body }) => {
+							expect(body.data.length).toBe(0);
+						});
+				});
+		});
+		it("should return 400 when the id is a number but not a comment id", () => {
+			return request(app)
+				.delete("/api/comments/19857")
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Bad Request");
+				});
+		});
+		it("should return 404 not found when passed an invalid path", () => {
+			return request(app)
+				.delete("/api/notapath/6")
+				.expect(404)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Not found");
+				});
+		});
+		it("should return 405 when the path does exist, but there is no delete option", () => {
+			return request(app)
+				.delete("/api/topics/")
+				.expect(405)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Method not allowed");
+				});
+		});
+		it("should return 400 when passed an id which is not in the correct format", () => {
+			return request(app)
+				.delete("/api/comments/notanumber")
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Invalid Request");
+				});
+		});
 	});
 });
