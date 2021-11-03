@@ -49,10 +49,31 @@ GET /api/articles/:article_id
  - 400 returns bad request when passed a sort by query which does not exist x
  - 400 returns bad request when asked to order by something which isnt asc/desc x
  - 404 returns no such path when topic value doesn't exist x
- - returns 404 no such path when there are no articles of the given topic 
+ - returns 404 no such path when there are no articles of the given topic x
 
 GET /api/articles/:article_id/comments 
-- happy path returns 200 and returns an array of comments for the given article id, with the properties comment id, votes, created at, author and body 
-- 400 bad request when the id does not meet criteria, e.g. is a string 
-- 404 no such path when the article has no comments
-- 404 no such path when passed a valid number but there are no articles for that number, e.g. 208897
+- happy path returns 200 and returns an array of comments for the given article id, with the properties comment id, votes, created at, author and body x
+- 400 bad request when the id does not meet criteria, e.g. is a string x
+- 404 no such path when the article has no comments x
+- 404 no such path when passed a valid number but there are no articles for that number, e.g. 208897 x
+
+POST /api/articles/:article_id/ 
+- happy path returns 201 takes an object with username and body and returns the posted comment
+- 400 for when not passed an object, e.g. when passed a string
+- 400 for when the object does not have correct properties 
+
+DELETE /api/comments/:comment_id
+- happy path returns 204 and deletes the comment with the given id, with no content returned x
+- 400 when given a username which does not exist x
+- 400 when the id is not a number e.g. a string x
+- 400 when the id is valid no but not a comment id, e.g. 864736 x
+- 404 when incorrect path x
+- 405 when path does exist, e.g. articles, but there is no delete option x 
+
+GET /api
+- responds with a JSON which describes all the endpoints on the API 
+
+STEP 4 - HOSTING
+
+
+

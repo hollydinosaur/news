@@ -41,8 +41,18 @@ exports.orderFilter = (order) => {
 };
 
 exports.validateTopic = (topic) => {
-	const validTopics = ["mitch", "cats", "paper", "*"];
+	const validTopics = ["mitch", "cats", "paper"];
 	if (!validTopics.includes(topic)) {
 		return Promise.reject({ status: 404, msg: "No such path" });
 	} else return topic;
+};
+
+exports.validateUsername = (username) => {
+	return db
+		.query(`SELECT username FROM users;`)
+		.then((data) => {
+			console.log(data.rows);
+			return data.rows;
+		})
+		.catch(err);
 };

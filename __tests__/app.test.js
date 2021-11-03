@@ -25,7 +25,7 @@ describe("get request tests", () => {
 				.get("/api/notanendpoint")
 				.expect(404)
 				.then(({ body }) => {
-					expect(body).toEqual({ message: "Not found" });
+					expect(body).toEqual({ msg: "Not found" });
 				});
 		});
 	});
@@ -149,9 +149,49 @@ describe("get request tests", () => {
 				});
 		});
 	});
+	describe("get /api/articles/:article_id/comments", () => {
+		it("should return status 200, returning an array of comments for the article with the given id with the properties comment id, votes, created at, author and body", () => {
+			return request(app)
+				.get("/api/articles/1/comments")
+				.expect(200)
+				.then(({ body }) => {
+					body.comments.forEach((object) => {
+						expect(object).toHaveProperty("created_at");
+						expect(object).toHaveProperty("author");
+						expect(object).toHaveProperty("body");
+						expect(object).toHaveProperty("comment_id");
+						expect(object).toHaveProperty("votes");
+					});
+				});
+		});
+		it("should return 400 bad request when passed an id which is not a number", () => {
+			return request(app)
+				.get("/api/articles/notanumber/comments")
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Invalid Request");
+				});
+		});
+		it("should return 404 no such path when the given article does not have any comments", () => {
+			return request(app)
+				.get("/api/articles/2/comments")
+				.expect(404)
+				.then(({ body }) => {
+					expect(body.msg).toBe("No such path");
+				});
+		});
+		it("should return 404 no such path when passed an id which does not exist", () => {
+			return request(app)
+				.get("/api/articles/294782/comments")
+				.expect(404)
+				.then(({ body }) => {
+					expect(body.msg).toBe("No such path");
+				});
+		});
+	});
 });
 
-describe.skip("patch request tests", () => {
+describe("patch request tests", () => {
 	describe("patch /api/articles/:article_id", () => {
 		it("returns 201 and should accept an object and increment the amount of votes on the article with the given id (when the id is not a negative) using the value of the object. It should return the whole updated article", () => {
 			return request(app)
@@ -193,6 +233,66 @@ describe.skip("patch request tests", () => {
 				.expect(400)
 				.then(({ body }) => {
 					expect(body.msg).toBe("Invalid Request");
+				});
+		});
+	});
+});
+
+describe("post request tests", () => {
+	describe("post /api/articles/:article_id/", () => {
+		it("should return 201 and take an object with a username and body and return the posted comment", () => {
+			return request(app)
+				.post("/api/articles/2/")
+				.send({ username: "rogersop", body: "here is my comment" })
+				.expect(201)
+				.then(({ body }) => {
+					expect(body).toHaveProperty("body");
+					expect(body).toHaveProperty("author");
+				});
+		});
+		it("should return 400 when passed a username does not exist", () => {
+			return request(app)
+				.post("/api/articles/2/")
+				.send({ username: "notausername", body: "here is another comment" })
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Invalid Username");
+				});
+		});
+		it("should return 400 bad request when the id passed is not a number", () => {
+			return request(app)
+				.post("/api/articles/notanumber/")
+				.send({ username: "rogersop", body: "here is a third comment" })
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Invalid article ID");
+				});
+		});
+		it("should return 400 and the id is a number but there are no articles with that number", () => {
+			return request(app)
+				.post("/api/articles/47297392/")
+				.send({ username: "rogersop", body: "here is a fourth comment" })
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Invalid article ID");
+				});
+		});
+		it("should return 404 not found when passed a path which does not exist", () => {
+			return request(app)
+				.post("/api/thisdoesnotexist/4/")
+				.send({ username: "rogersop", body: "here is a fourth comment" })
+				.expect(404)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Not found");
+				});
+		});
+		it("should return 405 when path does exist but there is no delete option", () => {
+			return request(app)
+				.post("/api/topics/")
+				.send({ username: "rogersop", body: "here is a fourth comment" })
+				.expect(405)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Method not allowed");
 				});
 		});
 	});

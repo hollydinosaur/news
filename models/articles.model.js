@@ -1,5 +1,6 @@
+const { query } = require("../db/connection");
 const db = require("../db/connection");
-const { sortByFilter, orderFilter, validateTopic } = require("../utils");
+const { sortByFilter, orderFilter } = require("../utils");
 
 exports.fetchArticleById = (id) => {
 	return db
@@ -67,4 +68,67 @@ exports.fetchAllArticles = async (
 		}
 		return data.rows;
 	});
+};
+
+exports.fetchComments = (id) => {
+	return db
+		.query(
+			`SELECT articles.created_at, articles.author, articles.body, comments.comment_id, comments.votes 
+	FROM articles
+	JOIN comments ON comments.article_id = articles.article_id
+	WHERE articles.article_id = $1;`,
+			[id]
+		)
+		.then((data) => {
+			if (data.rows.length === 0) {
+				return Promise.reject({
+					status: 404,
+					msg: "No such path",
+				});
+			}
+			return data.rows;
+		});
+};
+
+exports.commentPost = (id, username, comment) => {
+	validatedID = 0;
+	validatedUsername = 0;
+	return db
+		.query(`SELECT username FROM users;`)
+		.then((data) => {
+			data.rows.forEach((object) => {
+				if (object.username === username) {
+					validatedUsername = username;
+				}
+			});
+			if (validatedUsername === 0) {
+				return Promise.reject({ status: 400, msg: "Invalid Username" });
+			}
+		})
+		.then((validatedUsername) => {
+			return db.query(`SELECT article_id FROM articles;`).then((data) => {
+				data.rows.forEach((object) => {
+					if (object.article_id === +id) {
+						validatedID = id;
+					}
+				});
+				if (validatedID === 0) {
+					return Promise.reject({ status: 400, msg: "Invalid article ID" });
+				}
+			});
+		})
+		.then((validatedUsername, validatedId) => {
+			return db.query(
+				`INSERT INTO comments
+	(body, author, article_id)
+	VALUES
+	($1, $2, $3)
+	RETURNING*`,
+				[comment, validatedUsername, validatedId]
+			);
+		})
+
+		.then((data) => {
+			return data.rows[0];
+		});
 };

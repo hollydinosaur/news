@@ -1,6 +1,11 @@
-const { createReferenceObj, formatArray } = require("../utils");
+const {
+	createReferenceObj,
+	formatArray,
+	orderFilter,
+	validateTopic,
+} = require("../utils");
 
-describe("utils tests", () => {
+describe("reference object", () => {
 	it("creates a reference object based on the given parameters", () => {
 		const articles = [
 			{
@@ -17,6 +22,9 @@ describe("utils tests", () => {
 			output
 		);
 	});
+});
+
+describe("format array", () => {
 	it("creates a formatted array when passed an array, a reference object and two parameters", () => {
 		const arr = [
 			{
@@ -42,5 +50,17 @@ describe("utils tests", () => {
 		const param2 = "article_name";
 		const refObj = { 1: "oh", 2: "ooops" };
 		expect(formatArray(arr, refObj, param1, param2)).toEqual(outputArr);
+	});
+});
+
+describe("order filter", () => {
+	it("should identify a valid order filter and return it", () => {
+		expect(orderFilter("ASC")).toBe("ASC");
+	});
+});
+
+describe("validate topic", () => {
+	it("should identify a valid topic and return it", () => {
+		expect(validateTopic("mitch")).toBe("mitch");
 	});
 });

@@ -14,7 +14,7 @@ app.use(handleCustom);
 app.use(handlePsqlErrors);
 app.use(handle500);
 app.all("/*", (req, res, next) => {
-	res.status(404).send({ message: "Not found" });
+	res.status(404).send({ msg: "Not found" });
 });
 
 module.exports = app;
