@@ -29,7 +29,7 @@ const getAllArticles = (req, res, next) => {
 	const { topic } = req.query;
 	fetchAllArticles(sort_by, order, topic)
 		.then((articles) => {
-			res.status(200).send(articles);
+			res.status(200).send({ articles });
 		})
 		.catch(next);
 };
