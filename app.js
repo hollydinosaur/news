@@ -10,6 +10,7 @@ app.use(express.json());
 
 app.use("/api", apiRouter);
 
+// ERROR HANDLING
 app.use(handleCustom);
 app.use(handlePsqlErrors);
 app.use(handle500);

@@ -63,7 +63,7 @@ describe("get request tests", () => {
 				});
 		});
 	});
-	describe.only("get /api/articles tests", () => {
+	describe("get /api/articles tests", () => {
 		it("returns 200 and an array of article objects with the properties author(username from users), title, article_id, topic, created_at, votes, comment_count", () => {
 			return request(app)
 				.get("/api/articles")
@@ -213,6 +213,30 @@ describe("get request tests", () => {
 		it("should return 404 when passed a path which does not exist", () => {
 			return request(app)
 				.get("/notanapi")
+				.expect(404)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Not found");
+				});
+		});
+	});
+	describe("GET /api/users", () => {
+		it("Responds 200 with an array of objects, each object should have the property username", () => {
+			return request(app)
+				.get("/api/users")
+				.expect(200)
+				.then(({ body }) => {
+					expect(body.users).toBeInstanceOf(Array);
+					expect(body).toBeInstanceOf(Object);
+					body.users.forEach((object) => {
+						expect(object).toHaveProperty("username");
+						expect(object).toHaveProperty("name");
+						expect(object).toHaveProperty("avatar_url");
+					});
+				});
+		});
+		it("should return 404 when passed an invalid path", () => {
+			return request(app)
+				.get("/notapath")
 				.expect(404)
 				.then(({ body }) => {
 					expect(body.msg).toBe("Not found");

@@ -2,8 +2,9 @@ This server is hosted on heroku at: https://nc-news-server-holly.herokuapp.com/
 
 I have created a list of all the current endpoints at: https://nc-news-server-holly.herokuapp.com/api
 
-It is a news server which holds a number of articles about different topics. Users have the ability to make their own comments on the articles and can down or up vote for the articles based on their view of the article.
-It has a number of facilities which allow you to access and filter the data as well as the option to delete a comment by id.
+This is a news server which holds a number of articles about different topics. Users have the ability to make their own comments on the articles and can down or up vote the articles based on their view of the article. A user needs to have a valid username to post a comment.
+
+It has a number of facilities which allow you to access and filter the data as well as the option to delete a comment by id number.
 
 To clone the database, you will need to add the git repository https://github.com/hollydinosaur/news. Once this is git cloned, you will need to run the file through node.js with the following dependencies
 
@@ -24,3 +25,5 @@ The minimum versions of the dependencies are as follows:
 - supertest 6.1.6
 - jest 27.3.1
 - node >= 0.6
+
+:)
