@@ -15,8 +15,8 @@ const deleteComment = (req, res, next) => {
 const getComments = (req, res, next) => {
 	const { comment_id } = req.params;
 	getCommentById(comment_id)
-		.then((data) => {
-			res.status(200).send({ data });
+		.then((comment) => {
+			res.status(200).send({ comment });
 		})
 		.catch(next);
 };

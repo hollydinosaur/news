@@ -14,7 +14,7 @@ describe("get request tests", () => {
 				.get("/api/topics")
 				.expect(200)
 				.then(({ body }) => {
-					body.forEach((object) => {
+					body.topics.forEach((object) => {
 						expect(object).toHaveProperty("slug");
 						expect(object).toHaveProperty("description");
 					});
@@ -189,6 +189,28 @@ describe("get request tests", () => {
 				});
 		});
 	});
+	describe("get /api", () => {
+		it("returns 200 and should return a JSON object with all the available endpoints", () => {
+			return request(app)
+				.get("/api")
+				.expect(200)
+				.then(({ body }) => {
+					expect(body.endpoints["GET /api"]).toHaveProperty("description");
+					expect(body.endpoints["GET /api/topics"]).toHaveProperty(
+						"description"
+					);
+					expect(
+						body.endpoints["DELETE /api/comments/:comment_id"]
+					).toHaveProperty("description");
+					expect(
+						body.endpoints["GET /api/articles/:article_id/comments"]
+					).toHaveProperty("exampleResponse");
+					expect(body.endpoints["GET /api/articles"].queries).toBeInstanceOf(
+						Array
+					);
+				});
+		});
+	});
 });
 
 describe("patch request tests", () => {
@@ -316,7 +338,7 @@ describe("post request tests", () => {
 	});
 });
 
-describe.only("delete request tests", () => {
+describe("delete request tests", () => {
 	describe("delete /api/comments/:comment_id", () => {
 		it("should return 204 and delete the comment with the given id, without returning anything", () => {
 			return request(app)
@@ -330,7 +352,7 @@ describe.only("delete request tests", () => {
 						.get("/api/comments/4")
 						.expect(200)
 						.then(({ body }) => {
-							expect(body.data.length).toBe(0);
+							expect(body.comment.length).toBe(0);
 						});
 				});
 		});
