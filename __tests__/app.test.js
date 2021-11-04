@@ -63,7 +63,7 @@ describe("get request tests", () => {
 				});
 		});
 	});
-	describe("get /api/articles tests", () => {
+	describe.only("get /api/articles tests", () => {
 		it("returns 200 and an array of article objects with the properties author(username from users), title, article_id, topic, created_at, votes, comment_count", () => {
 			return request(app)
 				.get("/api/articles")
@@ -208,6 +208,14 @@ describe("get request tests", () => {
 					expect(body.endpoints["GET /api/articles"].queries).toBeInstanceOf(
 						Array
 					);
+				});
+		});
+		it("should return 404 when passed a path which does not exist", () => {
+			return request(app)
+				.get("/notanapi")
+				.expect(404)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Not found");
 				});
 		});
 	});

@@ -29,8 +29,8 @@ exports.changeArticleVotes = (id, voteChange) => {
 			return db
 				.query(
 					`UPDATE articles
-		SET votes = $1
-		WHERE article_id = $2 RETURNING *`,
+					SET votes = $1
+					WHERE article_id = $2 RETURNING *`,
 					[votes, id]
 				)
 				.then((data) => {
@@ -46,20 +46,16 @@ exports.fetchAllArticles = async (
 ) => {
 	let verifiedSortBy = await sortByFilter(sortBy);
 	let verifiedOrder = await orderFilter(order);
-	let params = [];
+	const params = [];
+	let queryStr = `SELECT articles.*, COUNT (comments.comment_id) AS comment_count
+	FROM articles 
+	JOIN comments ON comments.article_id = articles.article_id`;
+	let endQuery = ` GROUP BY articles.article_id
+	ORDER BY ${verifiedSortBy} ${verifiedOrder};`;
 	if (topic === undefined) {
-		queryStr = `SELECT articles.*, COUNT (comments.comment_id) AS comment_count
-		FROM articles 
-		JOIN comments ON comments.article_id = articles.article_id
-		GROUP BY articles.article_id
-		ORDER BY ${verifiedSortBy} ${verifiedOrder};`;
+		queryStr += endQuery;
 	} else {
-		queryStr = `SELECT articles.*, COUNT (comments.comment_id) AS comment_count
-		FROM articles 
-		JOIN comments ON comments.article_id = articles.article_id
-		WHERE topic = $1
-		GROUP BY articles.article_id
-		ORDER BY ${verifiedSortBy} ${verifiedOrder};`;
+		queryStr += ` WHERE topic = $1` + endQuery;
 		params.push(topic);
 	}
 	return db.query(queryStr, params).then((data) => {
