@@ -1,4 +1,5 @@
 const db = require("./db/connection");
+const { getUsers } = require("./models/users.model");
 
 exports.sortByFilter = (sortBy) => {
 	const sortByCriteria = [

@@ -243,6 +243,34 @@ describe("get request tests", () => {
 				});
 		});
 	});
+	describe("GET /api/users/:username", () => {
+		it("should return 200 and an object containing the details of the user with the given username", () => {
+			return request(app)
+				.get("/api/users/rogersop")
+				.expect(200)
+				.then(({ body }) => {
+					expect(body.user.username).toBe("rogersop");
+					expect(body.user.name).toBe("paul");
+					expect(body.user).toHaveProperty("avatar_url");
+				});
+		});
+		it("should return 404 when passed an invalid path", () => {
+			return request(app)
+				.get("/notapath")
+				.expect(404)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Not found");
+				});
+		});
+		it("should return 404 not found when passed a username which does not exist", () => {
+			return request(app)
+				.get("/api/users/thisisnotausername")
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Bad Request");
+				});
+		});
+	});
 });
 
 describe("patch request tests", () => {
