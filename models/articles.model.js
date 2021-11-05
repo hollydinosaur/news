@@ -48,17 +48,19 @@ exports.fetchAllArticles = async (
 ) => {
 	let verifiedSortBy = await sortByFilter(sortBy);
 	let verifiedOrder = await orderFilter(order);
-	const params = [+limit];
+	const offset = (p - 1) * +limit;
+	const params = [+limit, offset];
+
 	let queryStr = `SELECT articles.*, COUNT (comments.comment_id) AS comment_count
 	FROM articles
 	LEFT JOIN comments ON comments.article_id = articles.article_id`;
 	let endQuery = ` GROUP BY articles.article_id
 	ORDER BY ${verifiedSortBy} ${verifiedOrder} 
-	LIMIT $1 ;`;
+	LIMIT $1 OFFSET $2;`;
 	if (topic === undefined) {
 		queryStr += endQuery;
 	} else {
-		queryStr += ` WHERE topic = $2` + endQuery;
+		queryStr += ` WHERE topic = $3` + endQuery;
 		params.push(topic);
 	}
 	return db.query(queryStr, params).then((data) => {

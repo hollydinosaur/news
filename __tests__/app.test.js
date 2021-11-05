@@ -63,7 +63,7 @@ describe("get request tests", () => {
 				});
 		});
 	});
-	describe("get /api/articles tests", () => {
+	describe.only("get /api/articles tests", () => {
 		it("returns 200 and an array of article objects with the properties author(username from users), title, article_id, topic, created_at, votes, comment_count", () => {
 			return request(app)
 				.get("/api/articles")
@@ -162,6 +162,14 @@ describe("get request tests", () => {
 				.expect(200)
 				.then(({ body }) => {
 					expect(body.articles.length).toBe(10);
+				});
+		});
+		it("should accept a p query which specifies the page in which the user wishes to start at", () => {
+			return request(app)
+				.get("/api/articles/?p=2")
+				.expect(200)
+				.then(({ body }) => {
+					expect(body.articles.length).toBe(2);
 				});
 		});
 	});
