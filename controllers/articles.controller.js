@@ -5,10 +5,15 @@ const {
 	fetchComments,
 	commentPost,
 } = require("../models/articles.model");
+const {
+	validateUsername,
+	validateTopicId,
+	validateArticleID,
+} = require("../utils");
 
 const getArticleById = (req, res, next) => {
 	const { id } = req.params;
-	fetchArticleById(id)
+	return fetchArticleById(id)
 		.then((article) => {
 			res.status(200).send({ article });
 		})
@@ -18,16 +23,16 @@ const getArticleById = (req, res, next) => {
 const updateArticleVotes = (req, res, next) => {
 	const { id } = req.params;
 	const { inc_votes } = req.body;
-	changeArticleVotes(id, inc_votes)
+	return changeArticleVotes(id, inc_votes)
 		.then((article) => {
-			res.status(201).send({ article });
+			res.status(200).send({ article });
 		})
 		.catch(next);
 };
 
 const getAllArticles = (req, res, next) => {
 	const { sort_by, order, topic, limit, p } = req.query;
-	fetchAllArticles(sort_by, order, topic, limit, p)
+	return fetchAllArticles(sort_by, order, topic, limit, p)
 		.then((articles) => {
 			res.status(200).send({ articles });
 		})
@@ -46,9 +51,12 @@ const getComments = (req, res, next) => {
 const postComment = (req, res, next) => {
 	const { id } = req.params;
 	const { username, body } = req.body;
-	commentPost(id, username, body)
+	validateUsername(username)
+		.then(() => {
+			return commentPost(id, username, body);
+		})
 		.then((comment) => {
-			res.status(201).send(comment);
+			res.status(200).send(comment);
 		})
 		.catch(next);
 };

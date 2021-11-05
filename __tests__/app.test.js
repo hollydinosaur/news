@@ -14,6 +14,7 @@ describe("get request tests", () => {
 				.get("/api/topics")
 				.expect(200)
 				.then(({ body }) => {
+					expect(body.topics).toHaveLength(3);
 					body.topics.forEach((object) => {
 						expect(object).toHaveProperty("slug");
 						expect(object).toHaveProperty("description");
@@ -29,16 +30,16 @@ describe("get request tests", () => {
 				});
 		});
 	});
-	describe("get /api/articles/:article_id", () => {
-		it("should return 200 and an object containing the relevant article, including author, title, article id, body, topic, created at, votes and comment count. Comment count should include a count of all the comments provided on the article", () => {
+	describe("get /api/articles/:article_id, getArticleById", () => {
+		it("should return 200 and an object containing the relevant article, including author, title, article id, topic, created at, votes and comment count. Comment count should include a count of all the comments provided on the article", () => {
 			return request(app)
 				.get("/api/articles/1")
 				.expect(200)
 				.then(({ body }) => {
+					expect(body.article).toBeInstanceOf(Object);
 					expect(body.article).toHaveProperty("author");
 					expect(body.article).toHaveProperty("title");
 					expect(body.article).toHaveProperty("article_id");
-					expect(body.article).toHaveProperty("body");
 					expect(body.article).toHaveProperty("topic");
 					expect(body.article).toHaveProperty("created_at");
 					expect(body.article).toHaveProperty("votes");
@@ -57,18 +58,19 @@ describe("get request tests", () => {
 		it("should return 404 not found if passed a valid number which is not an article id", () => {
 			return request(app)
 				.get("/api/articles/50948")
-				.expect(404)
+				.expect(400)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Article ID not found");
+					expect(body.msg).toBe("Invalid Request");
 				});
 		});
 	});
-	describe.only("get /api/articles tests", () => {
+	describe("get /api/articles tests, getAllArticles", () => {
 		it("returns 200 and an array of article objects with the properties author(username from users), title, article_id, topic, created_at, votes, comment_count", () => {
 			return request(app)
 				.get("/api/articles")
 				.expect(200)
 				.then(({ body }) => {
+					expect(body.articles).toHaveLength(10);
 					body.articles.forEach((object) => {
 						expect(object).toHaveProperty("author");
 						expect(object).toHaveProperty("title");
@@ -111,6 +113,7 @@ describe("get request tests", () => {
 				.get("/api/articles/?sort_by=created_at&&order=ASC&&topic=mitch")
 				.expect(200)
 				.then(({ body }) => {
+					expect(body.articles).toHaveLength(10);
 					body.articles.forEach((object) => {
 						expect(object.topic).toBe("mitch");
 					});
@@ -121,7 +124,7 @@ describe("get request tests", () => {
 				.get("/api/articles/?sort_by=notasortbyquery")
 				.expect(400)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid sort by query");
+					expect(body.msg).toBe("Invalid Request");
 				});
 		});
 		it("should return 400 when passed an order criteria which does not exist", () => {
@@ -129,23 +132,23 @@ describe("get request tests", () => {
 				.get("/api/articles/?order=notanorder")
 				.expect(400)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid order query");
+					expect(body.msg).toBe("Invalid Request");
 				});
 		});
 		it("should return 404 no such path when the topic value does not exist", () => {
 			return request(app)
 				.get("/api/articles/?topic=notattopic")
-				.expect(404)
+				.expect(400)
 				.then(({ body }) => {
-					expect(body.msg).toBe("No such path");
+					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return 404 no topic data when there are no articles of the given topic", () => {
+		it("should return 200 and an empty array when  the topic is valid but there are no articles of the given topic", () => {
 			return request(app)
 				.get("/api/articles/?topic=paper")
-				.expect(404)
+				.expect(200)
 				.then(({ body }) => {
-					expect(body.msg).toBe("No such path");
+					expect(body.articles).toHaveLength(0);
 				});
 		});
 		it("should accept a limit query, which allows the user to choose their own number of responses", () => {
@@ -172,21 +175,14 @@ describe("get request tests", () => {
 					expect(body.articles.length).toBe(2);
 				});
 		});
-		it("should have a total count property which displays the total number of articles, without any filters applied", () => {
-			return request(app)
-				.get("/api/articles/?p=2")
-				.expect(200)
-				.then(({ body }) => {
-					expect(body.articles).toHaveProperty("article_count");
-				});
-		});
 	});
-	describe("get /api/articles/:article_id/comments", () => {
+	describe("get /api/articles/:article_id/comments ", () => {
 		it("should return status 200, returning an array of comments for the article with the given id with the properties comment id, votes, created at, author and body", () => {
 			return request(app)
 				.get("/api/articles/1/comments")
 				.expect(200)
 				.then(({ body }) => {
+					expect(body.comments).toHaveLength(11);
 					body.comments.forEach((object) => {
 						expect(object).toHaveProperty("created_at");
 						expect(object).toHaveProperty("author");
@@ -194,6 +190,14 @@ describe("get request tests", () => {
 						expect(object).toHaveProperty("comment_id");
 						expect(object).toHaveProperty("votes");
 					});
+				});
+		});
+		it("should return 200 and an empty array when the ID is valid, but there are no comments", () => {
+			return request(app)
+				.get("/api/articles/2/comments")
+				.expect(200)
+				.then(({ body }) => {
+					expect(body.comments).toHaveLength(0);
 				});
 		});
 
@@ -205,20 +209,20 @@ describe("get request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return 404 no such path when the given article does not have any comments", () => {
+		it("should return 200 and an empty array when the given article does not have any comments", () => {
 			return request(app)
 				.get("/api/articles/2/comments")
-				.expect(404)
+				.expect(200)
 				.then(({ body }) => {
-					expect(body.msg).toBe("No such path");
+					expect(body.comments).toHaveLength(0);
 				});
 		});
-		it("should return 404 no such path when passed an id which does not exist", () => {
+		it("should return 400 bad request when passed an id which is a number but does not correspond with an id", () => {
 			return request(app)
 				.get("/api/articles/294782/comments")
-				.expect(404)
+				.expect(400)
 				.then(({ body }) => {
-					expect(body.msg).toBe("No such path");
+					expect(body.msg).toBe("Invalid Request");
 				});
 		});
 	});
@@ -260,6 +264,7 @@ describe("get request tests", () => {
 				.then(({ body }) => {
 					expect(body.users).toBeInstanceOf(Array);
 					expect(body).toBeInstanceOf(Object);
+					expect(body.users).toHaveLength(4);
 					body.users.forEach((object) => {
 						expect(object).toHaveProperty("username");
 						expect(object).toHaveProperty("name");
@@ -300,7 +305,7 @@ describe("get request tests", () => {
 				.get("/api/users/thisisnotausername")
 				.expect(400)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Bad Request");
+					expect(body.msg).toBe("Invalid Request");
 				});
 		});
 	});
@@ -308,11 +313,11 @@ describe("get request tests", () => {
 
 describe("patch request tests", () => {
 	describe("patch /api/articles/:article_id", () => {
-		it("returns 201 and should accept an object and increment the amount of votes on the article with the given id (when the id is not a negative) using the value of the object. It should return the whole updated article", () => {
+		it("returns 200 and should accept an object and increment the amount of votes on the article with the given id (when the id is not a negative) using the value of the object. It should return the whole updated article", () => {
 			return request(app)
 				.patch("/api/articles/2")
 				.send({ inc_votes: 10 })
-				.expect(201)
+				.expect(200)
 				.then(({ body }) => {
 					expect(body.article).toHaveProperty("article_id");
 					expect(body.article).toHaveProperty("title");
@@ -323,11 +328,11 @@ describe("patch request tests", () => {
 					expect(body.article.votes).toBe(10);
 				});
 		});
-		it("should return 201 and decrement the amount of votes on the article with the given id (when the id is a negative)", () => {
+		it("should return 200 and decrement the amount of votes on the article with the given id (when the id is a negative)", () => {
 			return request(app)
 				.patch("/api/articles/1")
 				.send({ inc_votes: -10 })
-				.expect(201)
+				.expect(200)
 				.then(({ body }) => {
 					expect(body.article.votes).toBe(90);
 				});
@@ -350,13 +355,31 @@ describe("patch request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
+		it("should return a 400 bad request when the id passed is not a valid article Id", () => {
+			return request(app)
+				.patch("/api/articles/193747")
+				.send({ inc_votes: 40 })
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Invalid Request");
+				});
+		});
+		it("should return a 400 bad request when the id passed is not a number", () => {
+			return request(app)
+				.patch("/api/articles/notanid")
+				.send({ inc_votes: 40 })
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Invalid Request");
+				});
+		});
 	});
 	describe("PATCH /api/comments/:comment_id", () => {
-		it("should accept an object in the form { inc_votes: newVote }, which will indicate how much the user would like to amend the comments votes by. It will return 201 and the updated comment", () => {
+		it("should accept an object in the form { inc_votes: newVote }, which will indicate how much the user would like to amend the comments votes by. It will return 200 and the updated comment", () => {
 			return request(app)
 				.patch("/api/comments/1")
 				.send({ inc_votes: 10 })
-				.expect(201)
+				.expect(200)
 				.then(({ body }) => {
 					expect(body.comment.votes).toBe(26);
 					expect(body.comment.article_id).toBe(9);
@@ -389,13 +412,13 @@ describe("patch request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return 404 invalid path when passed a valid number, but it does not correspond to a correct id", () => {
+		it("should return 400 bad request when passed a valid number, but it does not correspond to a correct id", () => {
 			return request(app)
 				.patch("/api/comments/47927497")
 				.send({ inc_votes: 10 })
-				.expect(404)
+				.expect(400)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Not found");
+					expect(body.msg).toBe("Invalid Request");
 				});
 		});
 		it("should return 404 invalid path when passed an invalid path", () => {
@@ -412,11 +435,11 @@ describe("patch request tests", () => {
 
 describe("post request tests", () => {
 	describe("post /api/articles/:article_id/", () => {
-		it("should return 201 and take an object with a username and body and return the posted comment", () => {
+		it("should return 200 and take an object with a username and body and return the posted comment", () => {
 			return request(app)
 				.post("/api/articles/2/")
 				.send({ username: "rogersop", body: "here is my comment" })
-				.expect(201)
+				.expect(200)
 				.then(({ body }) => {
 					expect(body).toHaveProperty("body");
 					expect(body).toHaveProperty("author");
@@ -428,7 +451,7 @@ describe("post request tests", () => {
 				.send({ username: "notausername", body: "here is another comment" })
 				.expect(400)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid Username");
+					expect(body.msg).toBe("Invalid Request");
 				});
 		});
 		it("should return 400 bad request when the id passed is not a number", () => {
@@ -437,7 +460,7 @@ describe("post request tests", () => {
 				.send({ username: "rogersop", body: "here is a third comment" })
 				.expect(400)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid article ID");
+					expect(body.msg).toBe("Invalid Request");
 				});
 		});
 		it("should return 400 and the id is a number but there are no articles with that number", () => {
@@ -446,7 +469,7 @@ describe("post request tests", () => {
 				.send({ username: "rogersop", body: "here is a fourth comment" })
 				.expect(400)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid article ID");
+					expect(body.msg).toBe("Invalid Request");
 				});
 		});
 		it("should return 404 not found when passed a path which does not exist", () => {
@@ -473,7 +496,7 @@ describe("post request tests", () => {
 				.send({ notausername: "rogersop", notabody: "here is a fifth comment" })
 				.expect(400)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid Username");
+					expect(body.msg).toBe("Invalid Request");
 				});
 		});
 		it("should return 400 when not passed an object", () => {
@@ -482,7 +505,7 @@ describe("post request tests", () => {
 				.send("not an object")
 				.expect(400)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid Username");
+					expect(body.msg).toBe("Invalid Request");
 				});
 		});
 	});
@@ -511,7 +534,7 @@ describe("delete request tests", () => {
 				.delete("/api/comments/19857")
 				.expect(400)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Bad Request");
+					expect(body.msg).toBe("Invalid Request");
 				});
 		});
 		it("should return 404 not found when passed an invalid path", () => {

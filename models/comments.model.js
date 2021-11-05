@@ -1,7 +1,9 @@
 const { query } = require("../db/connection");
 const db = require("../db/connection");
+const { validateCommentId } = require("../utils");
 
-exports.deleteCommentById = (id) => {
+exports.deleteCommentById = async (id) => {
+	await validateCommentId(id);
 	return db
 		.query(
 			`DELETE FROM comments
@@ -27,7 +29,8 @@ exports.getCommentById = (id) => {
 		});
 };
 
-exports.updateCommentById = (id, voteChange) => {
+exports.updateCommentById = async (id, voteChange) => {
+	await validateCommentId(id);
 	return db
 		.query(`SELECT votes FROM comments WHERE comment_id = $1`, [id])
 		.then((data) => {

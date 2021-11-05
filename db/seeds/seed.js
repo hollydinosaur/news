@@ -18,35 +18,35 @@ const seed = (data) => {
 		})
 		.then(() => {
 			return db.query(`CREATE TABLE topics (
-        slug VARCHAR(100) PRIMARY KEY, 
+        slug VARCHAR(100) PRIMARY KEY NOT NULL, 
         description VARCHAR(100)
         )`);
 		})
 		.then(() => {
 			return db.query(`CREATE TABLE users (
-        username VARCHAR(50) PRIMARY KEY,
+        username VARCHAR(50) PRIMARY KEY NOT NULL,
         avatar_url VARCHAR(250),
-        name VARCHAR(75)
+        name VARCHAR(75) NOT NULL
       );`);
 		})
 		.then(() => {
 			return db.query(`CREATE TABLE articles (
-      article_id SERIAL PRIMARY KEY, 
-      title VARCHAR(200),
+      article_id SERIAL PRIMARY KEY NOT NULL, 
+      title VARCHAR(200) NOT NULL,
       body TEXT, 
       votes INT, 
       topic VARCHAR(100) REFERENCES topics(slug), 
       author VARCHAR(50) REFERENCES users(username),
-      created_at TIMESTAMP
+      created_at TIMESTAMP DEFAULT NOW() NOT NULL
       );`);
 		})
 		.then(() => {
 			return db.query(`CREATE TABLE comments (
-        comment_id SERIAL PRIMARY KEY, 
+        comment_id SERIAL PRIMARY KEY NOT NULL, 
         author VARCHAR(50) REFERENCES users(username), 
-        article_id INT REFERENCES articles(article_id), 
+        article_id INT REFERENCES articles(article_id) ON DELETE CASCADE, 
         votes INT, 
-        created_at TIMESTAMP, 
+        created_at TIMESTAMP DEFAULT NOW(), 
         body VARCHAR
       );`);
 		})
