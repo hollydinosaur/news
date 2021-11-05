@@ -58,9 +58,9 @@ describe("get request tests", () => {
 		it("should return 404 not found if passed a valid number which is not an article id", () => {
 			return request(app)
 				.get("/api/articles/50948")
-				.expect(400)
+				.expect(404)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid Request");
+					expect(body.msg).toBe("Invalid Path");
 				});
 		});
 	});
@@ -138,9 +138,9 @@ describe("get request tests", () => {
 		it("should return 404 no such path when the topic value does not exist", () => {
 			return request(app)
 				.get("/api/articles/?topic=notattopic")
-				.expect(400)
+				.expect(404)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid Request");
+					expect(body.msg).toBe("Invalid Path");
 				});
 		});
 		it("should return 200 and an empty array when  the topic is valid but there are no articles of the given topic", () => {
@@ -217,12 +217,12 @@ describe("get request tests", () => {
 					expect(body.comments).toHaveLength(0);
 				});
 		});
-		it("should return 400 bad request when passed an id which is a number but does not correspond with an id", () => {
+		it("should return 404 bad path when passed an id which is a number but does not correspond with an id", () => {
 			return request(app)
 				.get("/api/articles/294782/comments")
-				.expect(400)
+				.expect(404)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid Request");
+					expect(body.msg).toBe("Invalid Path");
 				});
 		});
 	});
@@ -303,9 +303,9 @@ describe("get request tests", () => {
 		it("should return 404 not found when passed a username which does not exist", () => {
 			return request(app)
 				.get("/api/users/thisisnotausername")
-				.expect(400)
+				.expect(404)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid Request");
+					expect(body.msg).toBe("Invalid Path");
 				});
 		});
 	});
@@ -355,13 +355,13 @@ describe("patch request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return a 400 bad request when the id passed is not a valid article Id", () => {
+		it("should return a 404 bad request when the id passed is not a valid article Id", () => {
 			return request(app)
 				.patch("/api/articles/193747")
 				.send({ inc_votes: 40 })
-				.expect(400)
+				.expect(404)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid Request");
+					expect(body.msg).toBe("Invalid Path");
 				});
 		});
 		it("should return a 400 bad request when the id passed is not a number", () => {
@@ -412,13 +412,13 @@ describe("patch request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return 400 bad request when passed a valid number, but it does not correspond to a correct id", () => {
+		it("should return 404 bad request when passed a valid number, but it does not correspond to a correct id", () => {
 			return request(app)
 				.patch("/api/comments/47927497")
 				.send({ inc_votes: 10 })
-				.expect(400)
+				.expect(404)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid Request");
+					expect(body.msg).toBe("Invalid Path");
 				});
 		});
 		it("should return 404 invalid path when passed an invalid path", () => {
@@ -434,7 +434,7 @@ describe("patch request tests", () => {
 });
 
 describe("post request tests", () => {
-	describe.only("post /api/articles/:article_id/comments", () => {
+	describe("post /api/articles/:article_id/comments", () => {
 		it("should return 201 and take an object with a username and body and return the posted comment", () => {
 			return request(app)
 				.post("/api/articles/2/comments")
@@ -460,13 +460,13 @@ describe("post request tests", () => {
 					expect(body).toHaveProperty("author");
 				});
 		});
-		it("should return 400 when passed a username does not exist", () => {
+		it("should return 404 when passed a username does not exist", () => {
 			return request(app)
 				.post("/api/articles/2/comments")
 				.send({ username: "notausername", body: "here is another comment" })
-				.expect(400)
+				.expect(404)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid Request");
+					expect(body.msg).toBe("Invalid Path");
 				});
 		});
 		it("should return 400 bad request when the id passed is not a number", () => {
@@ -478,13 +478,13 @@ describe("post request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return 400 and the id is a number but there are no articles with that number", () => {
+		it("should return 404 and the id is a number but there are no articles with that number", () => {
 			return request(app)
 				.post("/api/articles/47297392/comments")
 				.send({ username: "rogersop", body: "here is a fourth comment" })
-				.expect(400)
+				.expect(404)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid Request");
+					expect(body.msg).toBe("Invalid Path");
 				});
 		});
 		it("should return 404 not found when passed a path which does not exist", () => {
@@ -505,22 +505,22 @@ describe("post request tests", () => {
 					expect(body.msg).toBe("Method not allowed");
 				});
 		});
-		it("should return 400 when passed an object which does not have the correct properties", () => {
+		it("should return 404 when passed an object which does not have the correct properties", () => {
 			return request(app)
 				.post("/api/articles/2/comments")
 				.send({ notausername: "rogersop", notabody: "here is a fifth comment" })
-				.expect(400)
+				.expect(404)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid Request");
+					expect(body.msg).toBe("Invalid Path");
 				});
 		});
-		it("should return 400 when not passed an object", () => {
+		it("should return 404 when not passed an object", () => {
 			return request(app)
 				.post("/api/articles/2/comments")
 				.send("not an object")
-				.expect(400)
+				.expect(404)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid Request");
+					expect(body.msg).toBe("Invalid Path");
 				});
 		});
 	});
@@ -544,12 +544,12 @@ describe("delete request tests", () => {
 						});
 				});
 		});
-		it("should return 400 when the id is a number but not a comment id", () => {
+		it("should return 404 when the id is a number but not a comment id", () => {
 			return request(app)
 				.delete("/api/comments/19857")
-				.expect(400)
+				.expect(404)
 				.then(({ body }) => {
-					expect(body.msg).toBe("Invalid Request");
+					expect(body.msg).toBe("Invalid Path");
 				});
 		});
 		it("should return 404 not found when passed an invalid path", () => {

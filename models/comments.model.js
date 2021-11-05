@@ -11,9 +11,7 @@ exports.deleteCommentById = async (id) => {
 			[id]
 		)
 		.then((data) => {
-			if (data.rows.length === 0) {
-				return Promise.reject({ status: 400, msg: "Bad Request" });
-			} else return data.rows;
+			return data.rows;
 		});
 };
 
@@ -34,9 +32,7 @@ exports.updateCommentById = async (id, voteChange) => {
 	return db
 		.query(`SELECT votes FROM comments WHERE comment_id = $1`, [id])
 		.then((data) => {
-			if (data.rows[0] === undefined) {
-				return Promise.reject({ status: 404, msg: "Not found" });
-			} else return Number(data.rows[0].votes) + Number(voteChange);
+			return Number(data.rows[0].votes) + Number(voteChange);
 		})
 		.then((votes) => {
 			return db

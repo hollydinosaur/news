@@ -16,3 +16,11 @@ exports.handle500 = (err, req, res, next) => {
 	console.log(err);
 	res.status(500).send({ msg: "Server error" });
 };
+
+exports.handle400 = (err, req, res, next) => {
+	return Promise.reject({ status: 400, msg: "Invalid Request" });
+};
+
+exports.handle404 = (err, req, res, next) => {
+	return Promise.reject({ status: 404, msg: "Invalid Path" });
+};

@@ -1,3 +1,4 @@
+const { handle400, handle404 } = require("./controllers/errors.controller");
 const db = require("./db/connection");
 
 exports.sortByFilter = (sortBy = "created_at") => {
@@ -11,14 +12,14 @@ exports.sortByFilter = (sortBy = "created_at") => {
 		"article_id",
 	];
 	if (!sortByCriteria.includes(sortBy)) {
-		return Promise.reject({ status: 400, msg: "Invalid Request" });
+		return handle400();
 	} else return sortBy;
 };
 
 exports.orderFilter = (order = "DESC") => {
 	const orderCriteria = ["ASC", "DESC"];
 	if (!orderCriteria.includes(order)) {
-		return Promise.reject({ status: 400, msg: "Invalid Request" });
+		return handle400();
 	} else return order;
 };
 
@@ -31,7 +32,7 @@ exports.validateTopic = (topic) => {
 			.then((data) => {
 				if (data.rows.length === 0) {
 					if (data.rows.length === 0) {
-						return Promise.reject({ status: 400, msg: "Invalid Request" });
+						return handle404();
 					}
 				}
 				return topic;
@@ -43,20 +44,9 @@ exports.validateUsername = (username) => {
 		.query(`SELECT * FROM users WHERE username = $1;`, [username])
 		.then((data) => {
 			if (data.rows.length === 0) {
-				return Promise.reject({ status: 400, msg: "Invalid Request" });
+				return handle404();
 			}
 			return username;
-		});
-};
-
-exports.validateTopicId = (topicId) => {
-	return db
-		.query(`SELECT * FROM topics WHERE topic_id = $1;`, [topicId])
-		.then((data) => {
-			if (data.rows.length === 0) {
-				return Promise.reject({ status: 400, msg: "Invalid Request" });
-			}
-			return topicId;
 		});
 };
 
@@ -65,7 +55,7 @@ exports.validateArticleID = (articleId) => {
 		.query(`SELECT * FROM articles WHERE article_id = $1;`, [articleId])
 		.then((data) => {
 			if (data.rows.length === 0) {
-				return Promise.reject({ status: 400, msg: "Invalid Request" });
+				return handle404();
 			}
 			return articleId;
 		});
@@ -76,7 +66,7 @@ exports.validateCommentId = (commentId) => {
 		.query(`SELECT * FROM comments WHERE comment_id = $1;`, [commentId])
 		.then((data) => {
 			if (data.rows.length === 0) {
-				return Promise.reject({ status: 400, msg: "Invalid Request" });
+				return handle404();
 			} else return commentId;
 		});
 };
