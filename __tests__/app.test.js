@@ -318,6 +318,63 @@ describe("patch request tests", () => {
 				});
 		});
 	});
+	describe("PATCH /api/comments/:comment_id", () => {
+		it("should accept an object in the form { inc_votes: newVote }, which will indicate how much the user would like to amend the comments votes by. It will return 201 and the updated comment", () => {
+			return request(app)
+				.patch("/api/comments/1")
+				.send({ inc_votes: 10 })
+				.expect(201)
+				.then(({ body }) => {
+					expect(body.comment.votes).toBe(26);
+					expect(body.comment.article_id).toBe(9);
+				});
+		});
+		it("should return 400 invalid request when not passed an object", () => {
+			return request(app)
+				.patch("/api/comments/1")
+				.send("this is not an object")
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Invalid Request");
+				});
+		});
+		it("should return 400 invalid request when passed an object with invalid parameters", () => {
+			return request(app)
+				.patch("/api/comments/1")
+				.send({ thisisnotright: "this isn't either" })
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Invalid Request");
+				});
+		});
+		it("should return 400 when passed an id in the incorrect format", () => {
+			return request(app)
+				.patch("/api/comments/thisisnotright")
+				.send({ inc_votes: 10 })
+				.expect(400)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Invalid Request");
+				});
+		});
+		it("should return 404 invalid path when passed a valid number, but it does not correspond to a correct id", () => {
+			return request(app)
+				.patch("/api/comments/47927497")
+				.send({ inc_votes: 10 })
+				.expect(404)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Not found");
+				});
+		});
+		it("should return 404 invalid path when passed an invalid path", () => {
+			return request(app)
+				.patch("/api/thisisnotcorrect")
+				.send({ inc_votes: 10 })
+				.expect(404)
+				.then(({ body }) => {
+					expect(body.msg).toBe("Not found");
+				});
+		});
+	});
 });
 
 describe("post request tests", () => {

@@ -8,7 +8,7 @@ const { getEndpoints } = require("../controllers/api.controller");
 apiRouter.use("/topics", topicsRouter);
 apiRouter.use("/articles", articlesRouter);
 apiRouter.use("/comments", commentsRouter);
-apiRouter.get("/", getEndpoints);
 apiRouter.use("/users", usersRouter);
+apiRouter.get("/", getEndpoints);
 
 module.exports = apiRouter;
