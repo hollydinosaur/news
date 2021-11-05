@@ -14,7 +14,7 @@ app.get("/", (req, res, next) => {
 		msg: "welcome to my news database, for a full list of the possible endpoints, please visit https://nc-news-server-holly.herokuapp.com/api",
 	});
 });
-// ERROR HANDLING
+
 app.use(handleCustom);
 app.use(handlePsqlErrors);
 app.use(handle500);

@@ -7,9 +7,9 @@ const app = require("../app.js");
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
 
-describe("get request tests", () => {
-	describe("get /api/topics", () => {
-		it("should return status 200 and an array of the topics", () => {
+describe("GET request tests", () => {
+	describe("GET /api/topics", () => {
+		it("returns status 200 and an array of the topics available on the database", () => {
 			return request(app)
 				.get("/api/topics")
 				.expect(200)
@@ -21,7 +21,7 @@ describe("get request tests", () => {
 					});
 				});
 		});
-		it("should return 404 not found when passed an unavailable end point", () => {
+		it("returns 404 not found when passed an incorrect end point", () => {
 			return request(app)
 				.get("/api/notanendpoint")
 				.expect(404)
@@ -30,8 +30,8 @@ describe("get request tests", () => {
 				});
 		});
 	});
-	describe("get /api/articles/:article_id, getArticleById", () => {
-		it("should return 200 and an object containing the relevant article, including author, title, article id, topic, created at, votes and comment count. Comment count should include a count of all the comments provided on the article", () => {
+	describe("GET /api/articles/:article_id, getArticleById", () => {
+		it("it takes an article id as a parameter and returns 200 and an object containing the article with the id, including author, title, article_id, topic, created_at, votes and comment count. comment_count should include a count of all the comments provided on the given article", () => {
 			return request(app)
 				.get("/api/articles/1")
 				.expect(200)
@@ -47,7 +47,7 @@ describe("get request tests", () => {
 					expect(body.article.comment_count).toBe("11");
 				});
 		});
-		it("should return 400 invalid request when passed a string instead of a number", () => {
+		it("returns 400 invalid request when passed a string instead of a number", () => {
 			return request(app)
 				.get("/api/articles/notanid")
 				.expect(400)
@@ -55,7 +55,7 @@ describe("get request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return 404 not found if passed a valid number which is not an article id", () => {
+		it("returns 404 not found if passed a valid number, but it is not an article id", () => {
 			return request(app)
 				.get("/api/articles/50948")
 				.expect(404)
@@ -65,7 +65,7 @@ describe("get request tests", () => {
 		});
 	});
 	describe("get /api/articles tests, getAllArticles", () => {
-		it("returns 200 and an array of article objects with the properties author(username from users), title, article_id, topic, created_at, votes, comment_count", () => {
+		it("returns 200 and an array of article objects with the properties author, title, article_id, topic, created_at, votes, comment_count", () => {
 			return request(app)
 				.get("/api/articles")
 				.expect(200)
@@ -82,7 +82,7 @@ describe("get request tests", () => {
 					});
 				});
 		});
-		it("returns 200 and accepts sort by query of created_at, which is also the default, returns obj sorted by passed param", () => {
+		it("returns 200 and accepts a sort by query of created_at, which is also the default. it returns an object sorted by the date it was created at in descending order", () => {
 			return request(app)
 				.get("/api/articles/?sort_by=created_at")
 				.expect(200)
@@ -92,7 +92,7 @@ describe("get request tests", () => {
 					});
 				});
 		});
-		it("returns 200 and accepts other valid sort by queries", () => {
+		it("when passed another acceptable sort by query, it returns 200 and returns the object ordered in descending order by this query", () => {
 			return request(app)
 				.get("/api/articles/?sort_by=article_id")
 				.expect(200)
@@ -100,7 +100,7 @@ describe("get request tests", () => {
 					expect(body).toBeSortedBy("article_id", { descending: true });
 				});
 		});
-		it("returns 200, allows the user to change whether the order is ascending or descending", () => {
+		it("allows the user to change whether the order is ascending or descending and returns an object sorted in this order", () => {
 			return request(app)
 				.get("/api/articles/?sort_by=created_at&&order=ASC")
 				.expect(200)
@@ -108,7 +108,7 @@ describe("get request tests", () => {
 					expect(body).toBeSortedBy("created_at");
 				});
 		});
-		it("returns 200, allows the user to pass through a topic and filters the articles by this topic, returning a filtered object", () => {
+		it("allows the user to pass through a topic and filters the articles by this topic, returning 200 an object only containing articles about the given topic", () => {
 			return request(app)
 				.get("/api/articles/?sort_by=created_at&&order=ASC&&topic=mitch")
 				.expect(200)
@@ -119,7 +119,7 @@ describe("get request tests", () => {
 					});
 				});
 		});
-		it("should return 400 when passed a search query which does not exist", () => {
+		it("returns 400 when passed a search query which does not exist", () => {
 			return request(app)
 				.get("/api/articles/?sort_by=notasortbyquery")
 				.expect(400)
@@ -127,7 +127,7 @@ describe("get request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return 400 when passed an order criteria which does not exist", () => {
+		it("returns 400 when passed an order criteria which does not exist", () => {
 			return request(app)
 				.get("/api/articles/?order=notanorder")
 				.expect(400)
@@ -135,7 +135,7 @@ describe("get request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return 404 no such path when the topic value does not exist", () => {
+		it("returns 404 no such path when the topic value does not exist", () => {
 			return request(app)
 				.get("/api/articles/?topic=notattopic")
 				.expect(404)
@@ -143,7 +143,7 @@ describe("get request tests", () => {
 					expect(body.msg).toBe("Invalid Path");
 				});
 		});
-		it("should return 200 and an empty array when  the topic is valid but there are no articles of the given topic", () => {
+		it("returns 200 and an empty array when the given topic is valid, but there are no articles of the given topic", () => {
 			return request(app)
 				.get("/api/articles/?topic=paper")
 				.expect(200)
@@ -151,7 +151,7 @@ describe("get request tests", () => {
 					expect(body.articles).toHaveLength(0);
 				});
 		});
-		it("should accept a limit query, which allows the user to choose their own number of responses", () => {
+		it("accepts a limit query, which allows the user to choose their own number of responses", () => {
 			return request(app)
 				.get("/api/articles?limit=4")
 				.expect(200)
@@ -159,7 +159,7 @@ describe("get request tests", () => {
 					expect(body.articles.length).toBe(4);
 				});
 		});
-		it("should have a limit default of 10", () => {
+		it("has a limit default of 10", () => {
 			return request(app)
 				.get("/api/articles")
 				.expect(200)
@@ -167,7 +167,7 @@ describe("get request tests", () => {
 					expect(body.articles.length).toBe(10);
 				});
 		});
-		it("should accept a p query which specifies the page in which the user wishes to start at", () => {
+		it("accepts a p query which specifies the page in which the user wishes to start at", () => {
 			return request(app)
 				.get("/api/articles/?p=2")
 				.expect(200)
@@ -176,8 +176,8 @@ describe("get request tests", () => {
 				});
 		});
 	});
-	describe("get /api/articles/:article_id/comments ", () => {
-		it("should return status 200, returning an array of comments for the article with the given id with the properties comment id, votes, created at, author and body", () => {
+	describe("GET /api/articles/:article_id/comments ", () => {
+		it("returns status 200 and an array of comments about the article with the given id. the object has the properties comment id, votes, created at, author and body", () => {
 			return request(app)
 				.get("/api/articles/1/comments")
 				.expect(200)
@@ -192,7 +192,7 @@ describe("get request tests", () => {
 					});
 				});
 		});
-		it("should return 200 and an empty array when the ID is valid, but there are no comments", () => {
+		it("returns 200 and an empty array when the id is valid, but there are no comments for the article with that id", () => {
 			return request(app)
 				.get("/api/articles/2/comments")
 				.expect(200)
@@ -201,7 +201,7 @@ describe("get request tests", () => {
 				});
 		});
 
-		it("should return 400 bad request when passed an id which is not a number", () => {
+		it("returns 400 bad request when passed an id which is not a number", () => {
 			return request(app)
 				.get("/api/articles/notanumber/comments")
 				.expect(400)
@@ -209,7 +209,7 @@ describe("get request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return 200 and an empty array when the given article does not have any comments", () => {
+		it("returns 200 and an empty array when the given article does not have any associated comments", () => {
 			return request(app)
 				.get("/api/articles/2/comments")
 				.expect(200)
@@ -217,7 +217,7 @@ describe("get request tests", () => {
 					expect(body.comments).toHaveLength(0);
 				});
 		});
-		it("should return 404 bad path when passed an id which is a number but does not correspond with an id", () => {
+		it("returns 404 bad path when passed an id which is a number but does not correspond with an article id", () => {
 			return request(app)
 				.get("/api/articles/294782/comments")
 				.expect(404)
@@ -226,7 +226,7 @@ describe("get request tests", () => {
 				});
 		});
 	});
-	describe("get /api", () => {
+	describe("GET /api", () => {
 		it("returns 200 and should return a JSON object with all the available endpoints", () => {
 			return request(app)
 				.get("/api")
@@ -247,7 +247,7 @@ describe("get request tests", () => {
 					);
 				});
 		});
-		it("should return 404 when passed a path which does not exist", () => {
+		it("returns 404 when passed a path which does not exist", () => {
 			return request(app)
 				.get("/notanapi")
 				.expect(404)
@@ -257,7 +257,7 @@ describe("get request tests", () => {
 		});
 	});
 	describe("GET /api/users", () => {
-		it("Responds 200 with an array of objects, each object should have the property username", () => {
+		it("responds with an array of objects and status 200. each object should at least have the property username", () => {
 			return request(app)
 				.get("/api/users")
 				.expect(200)
@@ -272,7 +272,7 @@ describe("get request tests", () => {
 					});
 				});
 		});
-		it("should return 404 when passed an invalid path", () => {
+		it("returns 404 when passed an invalid path", () => {
 			return request(app)
 				.get("/notapath")
 				.expect(404)
@@ -282,7 +282,7 @@ describe("get request tests", () => {
 		});
 	});
 	describe("GET /api/users/:username", () => {
-		it("should return 200 and an object containing the details of the user with the given username", () => {
+		it("accepts a username as a parameter and returns 200 and an object containing the details of the user with the given username", () => {
 			return request(app)
 				.get("/api/users/rogersop")
 				.expect(200)
@@ -300,7 +300,7 @@ describe("get request tests", () => {
 					expect(body.msg).toBe("Not found");
 				});
 		});
-		it("should return 404 not found when passed a username which does not exist", () => {
+		it("returns 404 not found when passed a username which does not exist", () => {
 			return request(app)
 				.get("/api/users/thisisnotausername")
 				.expect(404)
@@ -311,9 +311,9 @@ describe("get request tests", () => {
 	});
 });
 
-describe("patch request tests", () => {
-	describe("patch /api/articles/:article_id", () => {
-		it("returns 200 and should accept an object and increment the amount of votes on the article with the given id (when the id is not a negative) using the value of the object. It should return the whole updated article", () => {
+describe("PATCH request tests", () => {
+	describe("PATCH /api/articles/:article_id", () => {
+		it("accepts an object with a key, the value of which indicates how the user would like to increment the amount of votes on the article with the given id using the value of the object. it returns 200 and the whole updated article", () => {
 			return request(app)
 				.patch("/api/articles/2")
 				.send({ inc_votes: 10 })
@@ -328,7 +328,7 @@ describe("patch request tests", () => {
 					expect(body.article.votes).toBe(10);
 				});
 		});
-		it("should return 200 and decrement the amount of votes on the article with the given id (when the id is a negative)", () => {
+		it("it should also decrement the amount of votes on the article with the given id when the id is a negative, returning 200", () => {
 			return request(app)
 				.patch("/api/articles/1")
 				.send({ inc_votes: -10 })
@@ -337,7 +337,7 @@ describe("patch request tests", () => {
 					expect(body.article.votes).toBe(90);
 				});
 		});
-		it("should return a 400 status code and a message saying invalid request when it is not sent an object", () => {
+		it("returns a 400 status code and a message saying invalid request when it is not sent an object", () => {
 			return request(app)
 				.patch("/api/articles/1")
 				.send("not an object")
@@ -346,7 +346,7 @@ describe("patch request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return a 400 bad request when the value passed is not a number, or the property is incorrectly labelled", () => {
+		it("returns a 400 bad request when the value passed is not a number, or the property is incorrectly labelled", () => {
 			return request(app)
 				.patch("/api/articles/1")
 				.send({ not_correct: "hello" })
@@ -355,7 +355,7 @@ describe("patch request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return a 404 bad request when the id passed is not a valid article Id", () => {
+		it("returns 404 bad request when the id passed is not a valid article id", () => {
 			return request(app)
 				.patch("/api/articles/193747")
 				.send({ inc_votes: 40 })
@@ -364,7 +364,7 @@ describe("patch request tests", () => {
 					expect(body.msg).toBe("Invalid Path");
 				});
 		});
-		it("should return a 400 bad request when the id passed is not a number", () => {
+		it("returns 400 bad request when the id passed is not a number", () => {
 			return request(app)
 				.patch("/api/articles/notanid")
 				.send({ inc_votes: 40 })
@@ -375,7 +375,7 @@ describe("patch request tests", () => {
 		});
 	});
 	describe("PATCH /api/comments/:comment_id", () => {
-		it("should accept an object in the form { inc_votes: newVote }, which will indicate how much the user would like to amend the comments votes by. It will return 200 and the updated comment", () => {
+		it("accepts a parameter of a comment id and an object in the form the value of  which will indicate how much the user would like to amend the comments votes by. returns a 200 and the updated comment", () => {
 			return request(app)
 				.patch("/api/comments/1")
 				.send({ inc_votes: 10 })
@@ -385,7 +385,7 @@ describe("patch request tests", () => {
 					expect(body.comment.article_id).toBe(9);
 				});
 		});
-		it("should return 400 invalid request when not passed an object", () => {
+		it("returns 400 invalid request when not passed an object", () => {
 			return request(app)
 				.patch("/api/comments/1")
 				.send("this is not an object")
@@ -394,7 +394,7 @@ describe("patch request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return 400 invalid request when passed an object with invalid parameters", () => {
+		it("returns 400 invalid request when passed an object with invalid parameters", () => {
 			return request(app)
 				.patch("/api/comments/1")
 				.send({ thisisnotright: "this isn't either" })
@@ -403,7 +403,7 @@ describe("patch request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return 400 when passed an id in the incorrect format", () => {
+		it("returns 400 when passed an id in the incorrect format", () => {
 			return request(app)
 				.patch("/api/comments/thisisnotright")
 				.send({ inc_votes: 10 })
@@ -412,7 +412,7 @@ describe("patch request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return 404 invalid path when passed a valid number, but it does not correspond to a correct id", () => {
+		it("returns 404 invalid path when passed a valid number, but the number does not correspond to a correct id", () => {
 			return request(app)
 				.patch("/api/comments/47927497")
 				.send({ inc_votes: 10 })
@@ -433,9 +433,9 @@ describe("patch request tests", () => {
 	});
 });
 
-describe("post request tests", () => {
-	describe("post /api/articles/:article_id/comments", () => {
-		it("should return 201 and take an object with a username and body and return the posted comment", () => {
+describe("POST request tests", () => {
+	describe("POST /api/articles/:article_id/comments", () => {
+		it("takes an article id as a parameter and an object, containing a username and body. it returns 201 and the posted comment", () => {
 			return request(app)
 				.post("/api/articles/2/comments")
 				.send({ username: "rogersop", body: "here is my comment" })
@@ -445,7 +445,7 @@ describe("post request tests", () => {
 					expect(body).toHaveProperty("author");
 				});
 		});
-		it("should return 201 and ignore unnecessary properties", () => {
+		it("when passed a valid object, but with additional properties, it returns 201 and ignores unnecessary properties", () => {
 			return request(app)
 				.post("/api/articles/2/comments")
 				.send({
@@ -460,7 +460,7 @@ describe("post request tests", () => {
 					expect(body).toHaveProperty("author");
 				});
 		});
-		it("should return 404 when passed a username does not exist", () => {
+		it("returns 404 when passed a username which does not exist", () => {
 			return request(app)
 				.post("/api/articles/2/comments")
 				.send({ username: "notausername", body: "here is another comment" })
@@ -469,7 +469,7 @@ describe("post request tests", () => {
 					expect(body.msg).toBe("Invalid Path");
 				});
 		});
-		it("should return 400 bad request when the id passed is not a number", () => {
+		it("returns 400 bad request when the id passed is not a number", () => {
 			return request(app)
 				.post("/api/articles/notanid/comments")
 				.send({ username: "rogersop", body: "here is a third comment" })
@@ -478,7 +478,7 @@ describe("post request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return 404 and the id is a number but there are no articles with that number", () => {
+		it("returns 404 and the id is a number, but there are no articles with that number", () => {
 			return request(app)
 				.post("/api/articles/47297392/comments")
 				.send({ username: "rogersop", body: "here is a fourth comment" })
@@ -487,7 +487,7 @@ describe("post request tests", () => {
 					expect(body.msg).toBe("Invalid Path");
 				});
 		});
-		it("should return 404 not found when passed a path which does not exist", () => {
+		it("returns 404 not found when passed a path which does not exist", () => {
 			return request(app)
 				.post("/api/thisdoesnotexist/4/comments")
 				.send({ username: "rogersop", body: "here is a fourth comment" })
@@ -496,7 +496,7 @@ describe("post request tests", () => {
 					expect(body.msg).toBe("Not found");
 				});
 		});
-		it("should return 405 when path does exist but there is no post option", () => {
+		it("returns 405 when path does exist but there is no post option", () => {
 			return request(app)
 				.post("/api/topics/")
 				.send({ username: "rogersop", body: "here is a fourth comment" })
@@ -505,7 +505,7 @@ describe("post request tests", () => {
 					expect(body.msg).toBe("Method not allowed");
 				});
 		});
-		it("should return 404 when passed an object which does not have the correct properties", () => {
+		it("returns 404 when passed an object which does not have the correct properties", () => {
 			return request(app)
 				.post("/api/articles/2/comments")
 				.send({ notausername: "rogersop", notabody: "here is a fifth comment" })
@@ -514,7 +514,7 @@ describe("post request tests", () => {
 					expect(body.msg).toBe("Invalid Path");
 				});
 		});
-		it("should return 404 when not passed an object", () => {
+		it("returns 404 when not passed an object", () => {
 			return request(app)
 				.post("/api/articles/2/comments")
 				.send("not an object")
@@ -526,9 +526,9 @@ describe("post request tests", () => {
 	});
 });
 
-describe("delete request tests", () => {
-	describe("delete /api/comments/:comment_id", () => {
-		it("should return 204 and delete the comment with the given id, without returning anything", () => {
+describe("DELETE request tests", () => {
+	describe("DELETE /api/comments/:comment_id", () => {
+		it("takes a comment id as a parameter and returns 204, deleting the comment with the given id, without returning anything", () => {
 			return request(app)
 				.delete("/api/comments/4")
 				.expect(204)
@@ -544,7 +544,7 @@ describe("delete request tests", () => {
 						});
 				});
 		});
-		it("should return 404 when the id is a number but not a comment id", () => {
+		it("returns 404 when the passed id is a number but not a valid comment id", () => {
 			return request(app)
 				.delete("/api/comments/19857")
 				.expect(404)
@@ -552,7 +552,7 @@ describe("delete request tests", () => {
 					expect(body.msg).toBe("Invalid Path");
 				});
 		});
-		it("should return 404 not found when passed an invalid path", () => {
+		it("when passed an invalid path, it returns 404 not found", () => {
 			return request(app)
 				.delete("/api/notapath/6")
 				.expect(404)
@@ -560,7 +560,7 @@ describe("delete request tests", () => {
 					expect(body.msg).toBe("Not found");
 				});
 		});
-		it("should return 405 when the path does exist, but there is no delete option", () => {
+		it("returns 405 when the passed path does exist, but there is no delete option for this path", () => {
 			return request(app)
 				.delete("/api/topics/")
 				.expect(405)
@@ -568,7 +568,7 @@ describe("delete request tests", () => {
 					expect(body.msg).toBe("Method not allowed");
 				});
 		});
-		it("should return 400 when passed an id which is not in the correct format", () => {
+		it("returns 400 when passed an id which is not in the correct format", () => {
 			return request(app)
 				.delete("/api/comments/notanumber")
 				.expect(400)
