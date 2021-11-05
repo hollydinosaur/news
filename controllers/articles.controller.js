@@ -26,10 +26,8 @@ const updateArticleVotes = (req, res, next) => {
 };
 
 const getAllArticles = (req, res, next) => {
-	const { sort_by } = req.query;
-	const { order } = req.query;
-	const { topic } = req.query;
-	fetchAllArticles(sort_by, order, topic)
+	const { sort_by, order, topic, limit } = req.query;
+	fetchAllArticles(sort_by, order, topic, limit)
 		.then((articles) => {
 			res.status(200).send({ articles });
 		})

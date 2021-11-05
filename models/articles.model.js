@@ -42,20 +42,23 @@ exports.changeArticleVotes = (id, voteChange) => {
 exports.fetchAllArticles = async (
 	sortBy = "created_at",
 	order = "DESC",
-	topic
+	topic,
+	limit = 10,
+	p = 1
 ) => {
 	let verifiedSortBy = await sortByFilter(sortBy);
 	let verifiedOrder = await orderFilter(order);
-	const params = [];
+	const params = [+limit];
 	let queryStr = `SELECT articles.*, COUNT (comments.comment_id) AS comment_count
-	FROM articles 
-	JOIN comments ON comments.article_id = articles.article_id`;
+	FROM articles
+	LEFT JOIN comments ON comments.article_id = articles.article_id`;
 	let endQuery = ` GROUP BY articles.article_id
-	ORDER BY ${verifiedSortBy} ${verifiedOrder};`;
+	ORDER BY ${verifiedSortBy} ${verifiedOrder} 
+	LIMIT $1 ;`;
 	if (topic === undefined) {
 		queryStr += endQuery;
 	} else {
-		queryStr += ` WHERE topic = $1` + endQuery;
+		queryStr += ` WHERE topic = $2` + endQuery;
 		params.push(topic);
 	}
 	return db.query(queryStr, params).then((data) => {

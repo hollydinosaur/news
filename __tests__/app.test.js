@@ -148,6 +148,22 @@ describe("get request tests", () => {
 					expect(body.msg).toBe("No such path");
 				});
 		});
+		it("should accept a limit query, which allows the user to choose their own number of responses", () => {
+			return request(app)
+				.get("/api/articles?limit=4")
+				.expect(200)
+				.then(({ body }) => {
+					expect(body.articles.length).toBe(4);
+				});
+		});
+		it("should have a limit default of 10", () => {
+			return request(app)
+				.get("/api/articles")
+				.expect(200)
+				.then(({ body }) => {
+					expect(body.articles.length).toBe(10);
+				});
+		});
 	});
 	describe("get /api/articles/:article_id/comments", () => {
 		it("should return status 200, returning an array of comments for the article with the given id with the properties comment id, votes, created at, author and body", () => {
@@ -164,6 +180,7 @@ describe("get request tests", () => {
 					});
 				});
 		});
+
 		it("should return 400 bad request when passed an id which is not a number", () => {
 			return request(app)
 				.get("/api/articles/notanumber/comments")
