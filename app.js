@@ -7,9 +7,11 @@ const {
 } = require("./controllers/errors.controller");
 const apiRouter = require("./routers/api.router.js");
 app.use(express.json());
-
 app.use("/api", apiRouter);
 
+app.get("/", (req, res, next) => {
+	res.status(200).send({ msg: "Welcome to my news API" });
+});
 // ERROR HANDLING
 app.use(handleCustom);
 app.use(handlePsqlErrors);
