@@ -34,15 +34,39 @@
 			]
 		}
 	},
+	"GET /api/users": {
+		"description": "it returns an array of all the users, providing their username, avatar url and name"
+	},
+	"GET /api/users/:username": {
+		"description": "it will respond with an object which includes data about the user at the given username",
+		"exampleResponse": {
+			" user": {
+				"username": "username",
+				"avatar_url": "url",
+				"name": "example name"
+			}
+		}
+	},
 	"PATCH /api/articles/:article_id": {
 		"description": "allows the user to pass through an object specifying how they would like to amend the votes tally on the article with the given id, it returns the updated article",
 		"request": { "inc_votes": "32" },
 		"exampleResponse": {
 			"title": "an example title",
-			"topic": "example topic",
-			"author": "example author",
+			"topic": "topic name",
+			"author": "username",
 			"body": "example body",
-			"created_at": "example date"
+			"created_at": "2020-05-21T23:19:00.000Z"
+		}
+	},
+	"PATCH /api/comments/:comment_id": {
+		"description": "it takes an object and a comment id. ist returns an object containing the updated comment at the given id",
+		"request": { "inc_votes": "32" },
+		"exampleResponse": {
+			"body": "example comment",
+			"votes": 14,
+			"author": "username",
+			"article_id": 1,
+			"created_at": "2020-05-21T23:19:00.000Z"
 		}
 	},
 	"POST /api/articles/:article_id/": {

@@ -412,7 +412,7 @@ describe("patch request tests", () => {
 					expect(body.msg).toBe("Invalid Request");
 				});
 		});
-		it("should return 404 bad request when passed a valid number, but it does not correspond to a correct id", () => {
+		it("should return 404 invalid path when passed a valid number, but it does not correspond to a correct id", () => {
 			return request(app)
 				.patch("/api/comments/47927497")
 				.send({ inc_votes: 10 })
