@@ -10,7 +10,9 @@ app.use(express.json());
 app.use("/api", apiRouter);
 
 app.get("/", (req, res, next) => {
-	res.status(200).send({ msg: "Welcome to my news API" });
+	res.status(200).send({
+		msg: "welcome to my news database, for a full list of the possible endpoints, please visit https://nc-news-server-holly.herokuapp.com/api",
+	});
 });
 // ERROR HANDLING
 app.use(handleCustom);
