@@ -172,6 +172,14 @@ describe("get request tests", () => {
 					expect(body.articles.length).toBe(2);
 				});
 		});
+		it("should have a total count property which displays the total number of articles, without any filters applied", () => {
+			return request(app)
+				.get("/api/articles/?p=2")
+				.expect(200)
+				.then(({ body }) => {
+					expect(body.articles).toHaveProperty("article_count");
+				});
+		});
 	});
 	describe("get /api/articles/:article_id/comments", () => {
 		it("should return status 200, returning an array of comments for the article with the given id with the properties comment id, votes, created at, author and body", () => {
