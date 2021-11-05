@@ -5,11 +5,7 @@ const {
 	fetchComments,
 	commentPost,
 } = require("../models/articles.model");
-const {
-	validateUsername,
-	validateTopicId,
-	validateArticleID,
-} = require("../utils");
+const { validateUsername } = require("../utils");
 
 const getArticleById = (req, res, next) => {
 	const { id } = req.params;
@@ -51,12 +47,9 @@ const getComments = (req, res, next) => {
 const postComment = (req, res, next) => {
 	const { id } = req.params;
 	const { username, body } = req.body;
-	validateUsername(username)
-		.then(() => {
-			return commentPost(id, username, body);
-		})
+	return commentPost(id, username, body)
 		.then((comment) => {
-			res.status(200).send(comment);
+			res.status(201).send(comment);
 		})
 		.catch(next);
 };

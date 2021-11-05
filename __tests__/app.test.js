@@ -434,12 +434,27 @@ describe("patch request tests", () => {
 });
 
 describe("post request tests", () => {
-	describe("post /api/articles/:article_id/", () => {
-		it("should return 200 and take an object with a username and body and return the posted comment", () => {
+	describe.only("post /api/articles/:article_id/comments", () => {
+		it("should return 201 and take an object with a username and body and return the posted comment", () => {
 			return request(app)
-				.post("/api/articles/2/")
+				.post("/api/articles/2/comments")
 				.send({ username: "rogersop", body: "here is my comment" })
-				.expect(200)
+				.expect(201)
+				.then(({ body }) => {
+					expect(body).toHaveProperty("body");
+					expect(body).toHaveProperty("author");
+				});
+		});
+		it("should return 201 and ignore unnecessary properties", () => {
+			return request(app)
+				.post("/api/articles/2/comments")
+				.send({
+					username: "rogersop",
+					body: "here is my comment",
+					hereis: "something",
+					which: "is not necessary",
+				})
+				.expect(201)
 				.then(({ body }) => {
 					expect(body).toHaveProperty("body");
 					expect(body).toHaveProperty("author");
@@ -447,7 +462,7 @@ describe("post request tests", () => {
 		});
 		it("should return 400 when passed a username does not exist", () => {
 			return request(app)
-				.post("/api/articles/2/")
+				.post("/api/articles/2/comments")
 				.send({ username: "notausername", body: "here is another comment" })
 				.expect(400)
 				.then(({ body }) => {
@@ -456,7 +471,7 @@ describe("post request tests", () => {
 		});
 		it("should return 400 bad request when the id passed is not a number", () => {
 			return request(app)
-				.post("/api/articles/notanumber/")
+				.post("/api/articles/notanid/comments")
 				.send({ username: "rogersop", body: "here is a third comment" })
 				.expect(400)
 				.then(({ body }) => {
@@ -465,7 +480,7 @@ describe("post request tests", () => {
 		});
 		it("should return 400 and the id is a number but there are no articles with that number", () => {
 			return request(app)
-				.post("/api/articles/47297392/")
+				.post("/api/articles/47297392/comments")
 				.send({ username: "rogersop", body: "here is a fourth comment" })
 				.expect(400)
 				.then(({ body }) => {
@@ -474,14 +489,14 @@ describe("post request tests", () => {
 		});
 		it("should return 404 not found when passed a path which does not exist", () => {
 			return request(app)
-				.post("/api/thisdoesnotexist/4/")
+				.post("/api/thisdoesnotexist/4/comments")
 				.send({ username: "rogersop", body: "here is a fourth comment" })
 				.expect(404)
 				.then(({ body }) => {
 					expect(body.msg).toBe("Not found");
 				});
 		});
-		it("should return 405 when path does exist but there is no delete option", () => {
+		it("should return 405 when path does exist but there is no post option", () => {
 			return request(app)
 				.post("/api/topics/")
 				.send({ username: "rogersop", body: "here is a fourth comment" })
@@ -492,7 +507,7 @@ describe("post request tests", () => {
 		});
 		it("should return 400 when passed an object which does not have the correct properties", () => {
 			return request(app)
-				.post("/api/articles/2/")
+				.post("/api/articles/2/comments")
 				.send({ notausername: "rogersop", notabody: "here is a fifth comment" })
 				.expect(400)
 				.then(({ body }) => {
@@ -501,7 +516,7 @@ describe("post request tests", () => {
 		});
 		it("should return 400 when not passed an object", () => {
 			return request(app)
-				.post("/api/articles/2/")
+				.post("/api/articles/2/comments")
 				.send("not an object")
 				.expect(400)
 				.then(({ body }) => {
