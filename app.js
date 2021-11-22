@@ -1,6 +1,6 @@
 const cors = require("cors");
-const express = require("express");
 app.use(cors());
+const express = require("express");
 const app = express();
 const {
 	handle500,
@@ -10,7 +10,6 @@ const {
 const apiRouter = require("./routers/api.router.js");
 app.use(express.json());
 app.use("/api", apiRouter);
-
 app.get("/", (req, res, next) => {
 	res.status(200).send({
 		msg: "welcome to my news database, for a full list of the possible endpoints, please visit https://nc-news-server-holly.herokuapp.com/api",
