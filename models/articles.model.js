@@ -80,7 +80,7 @@ exports.fetchComments = async (id) => {
 	await validateArticleID(id);
 	return db
 		.query(
-			`SELECT articles.created_at, articles.author, articles.body, comments.comment_id, comments.votes 
+			`SELECT comments.created_at, comments.author, comments.body, comments.comment_id, comments.votes 
 			FROM articles
 			JOIN comments ON comments.article_id = articles.article_id
 			WHERE articles.article_id = $1;`,
