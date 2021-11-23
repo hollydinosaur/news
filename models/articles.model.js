@@ -83,7 +83,8 @@ exports.fetchComments = async (id) => {
 			`SELECT comments.created_at, comments.author, comments.body, comments.comment_id, comments.votes 
 			FROM articles
 			JOIN comments ON comments.article_id = articles.article_id
-			WHERE articles.article_id = $1;`,
+			WHERE articles.article_id = $1
+			ORDER BY comments.votes;`,
 			[id]
 		)
 		.then((data) => {
