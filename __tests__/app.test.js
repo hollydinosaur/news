@@ -309,6 +309,17 @@ describe("GET request tests", () => {
 				});
 		});
 	});
+	describe("GET /api/:username/comments", () => {
+		it.only("returns status 200 and an array of the comments by the user", () => {
+			return request(app)
+				.get("/api/users/butter_bridge/comments")
+				.expect(200)
+				.then(({ body }) => {
+					g;
+					expect(body.comments).toHaveLength(5);
+				});
+		});
+	});
 });
 
 describe("PATCH request tests", () => {
@@ -508,7 +519,10 @@ describe("POST request tests", () => {
 		it("returns 404 when passed an object which does not have the correct properties", () => {
 			return request(app)
 				.post("/api/articles/2/comments")
-				.send({ notausername: "rogersop", notabody: "here is a fifth comment" })
+				.send({
+					notausername: "rogersop",
+					notabody: "here is a fifth comment",
+				})
 				.expect(404)
 				.then(({ body }) => {
 					expect(body.msg).toBe("Invalid Path");

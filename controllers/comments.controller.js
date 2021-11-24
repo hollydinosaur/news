@@ -2,6 +2,7 @@ const {
 	deleteCommentById,
 	getCommentById,
 	updateCommentById,
+	getCommentsByUser,
 } = require("../models/comments.model");
 
 const deleteComment = (req, res, next) => {
@@ -32,4 +33,8 @@ const patchCommentById = (req, res, next) => {
 		.catch(next);
 };
 
-module.exports = { deleteComment, getComments, patchCommentById };
+module.exports = {
+	deleteComment,
+	getComments,
+	patchCommentById,
+};
