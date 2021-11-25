@@ -310,12 +310,11 @@ describe("GET request tests", () => {
 		});
 	});
 	describe("GET /api/:username/comments", () => {
-		it.only("returns status 200 and an array of the comments by the user", () => {
+		it("returns status 200 and an array of the comments by the user", () => {
 			return request(app)
 				.get("/api/users/butter_bridge/comments")
 				.expect(200)
 				.then(({ body }) => {
-					g;
 					expect(body.comments).toHaveLength(5);
 				});
 		});

@@ -23,7 +23,12 @@ exports.getUser = async (username) => {
 
 exports.getCommentsByUser = (username) => {
 	return db
-		.query(`SELECT * FROM comments WHERE author = $1`, [username])
+		.query(
+			`SELECT *
+		FROM comments 
+		WHERE author = $1`,
+			[username]
+		)
 		.then((data) => {
 			return data.rows;
 		});

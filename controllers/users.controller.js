@@ -24,7 +24,6 @@ const getAllCommentsByUser = (req, res, next) => {
 	const { username } = req.params;
 	getCommentsByUser(username)
 		.then((comments) => {
-			console.log(comments);
 			res.status(200).send({ comments });
 		})
 		.catch(next);
