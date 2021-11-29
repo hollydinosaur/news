@@ -25,20 +25,19 @@ exports.orderFilter = (order = "DESC") => {
 };
 
 exports.validateTopic = (topic) => {
-	if (topic === undefined || topic === "All") {
-		topic = "*";
+	if (topic === undefined) {
 		return topic;
-	} else
-		return db
-			.query(`SELECT * FROM topics WHERE slug = $1;`, [topic])
-			.then((data) => {
+	}
+	return db
+		.query(`SELECT * FROM topics WHERE slug = $1;`, [topic])
+		.then((data) => {
+			if (data.rows.length === 0) {
 				if (data.rows.length === 0) {
-					if (data.rows.length === 0) {
-						return handle404();
-					}
+					return handle404();
 				}
-				return topic;
-			});
+			}
+			return topic;
+		});
 };
 
 exports.validateUsername = (username) => {

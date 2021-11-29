@@ -65,7 +65,7 @@ exports.fetchAllArticles = async (
 	let endQuery = ` GROUP BY articles.article_id
 	ORDER BY ${sortBy} ${order} 
 	LIMIT $1 OFFSET $2;`;
-	if (topic === "*") {
+	if (topic === undefined) {
 		queryStr += endQuery;
 	} else {
 		queryStr += ` WHERE topic = $3` + endQuery;
@@ -73,7 +73,6 @@ exports.fetchAllArticles = async (
 	}
 
 	return db.query(queryStr, params).then((data) => {
-		console.log(data.rows);
 		return data.rows;
 	});
 };
