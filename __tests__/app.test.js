@@ -64,7 +64,7 @@ describe("GET request tests", () => {
 				});
 		});
 	});
-	describe("get /api/articles tests, getAllArticles", () => {
+	describe.only("get /api/articles tests, getAllArticles", () => {
 		it("returns 200 and an array of article objects with the properties author, title, article_id, topic, created_at, votes, comment_count", () => {
 			return request(app)
 				.get("/api/articles")
@@ -90,6 +90,14 @@ describe("GET request tests", () => {
 					expect(body.articles).toBeSortedBy("created_at", {
 						descending: true,
 					});
+				});
+		});
+		it.only("returns 200 and accepts a sort by query of comment_count", () => {
+			return request(app)
+				.get("/api/articles/?sort_by=comment_count")
+				.expect(200)
+				.then(({ body }) => {
+					expect(body.articles).toBeSortedBy("comment_count");
 				});
 		});
 		it("when passed another acceptable sort by query, it returns 200 and returns the object ordered in descending order by this query", () => {
@@ -173,6 +181,14 @@ describe("GET request tests", () => {
 				.expect(200)
 				.then(({ body }) => {
 					expect(body.articles.length).toBe(2);
+				});
+		});
+		it.only("should return all articles when not passed a topic, but passed a sortby and order query", () => {
+			return request(app)
+				.get("/api/articles/?sort_by=created_at&&order=ASC&&topic=All")
+				.expect(200)
+				.then(({ body }) => {
+					expect(body.articles.length).toBe(10);
 				});
 		});
 	});

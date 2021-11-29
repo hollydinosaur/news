@@ -10,6 +10,7 @@ exports.sortByFilter = (sortBy = "created_at") => {
 		"created_at",
 		"votes",
 		"article_id",
+		"comment_count",
 	];
 	if (!sortByCriteria.includes(sortBy)) {
 		return handle400();
@@ -24,7 +25,8 @@ exports.orderFilter = (order = "DESC") => {
 };
 
 exports.validateTopic = (topic) => {
-	if (topic === undefined) {
+	if (topic === undefined || topic === "All") {
+		topic = "*";
 		return topic;
 	} else
 		return db
